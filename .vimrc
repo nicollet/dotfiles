@@ -53,16 +53,6 @@ endfor
 
 let mapleader = "\<Space>"
 
-function! NiceCurlyBrace()
-	if &runtimepath =~ 'vim-go'
-		execute "normal! a{"
-		if getline('.') =~ 'func\|if\|for\|type\|else'
-			execute "normal a\<CR>}"
-			execute "normal O\<Space>\<BS>\<ESC>"
-		endif
-	endif
-endfunction
-
 if &runtimepath =~ 'vim-go'
 	function! FormatAndImports()
 		GoFmt
@@ -74,15 +64,13 @@ if &runtimepath =~ 'vim-go'
 		nmap <Leader>gb <Plug>(go-build)
 		nmap <Leader>gt <Plug>(go-test)
 		nmap <Leader>gT <Plug>(go-test-func)
-		nmap <Leader>gd <Plug>(go-doc-browser)
-		nmap <Leader>gD <Plug>(go-def)
 		nmap <Leader>gR <Plug>(go-rename)
 		nmap <Leader>gf <Plug>(go-freevars)
 		nmap <Leader>gl <Plug>(go-metalinter)
 		nmap <Leader>ga <Plug>(go-alternate-edit)
-		inoremap { <Esc>:call NiceCurlyBrace()<CR>a
-		inoremap "" ""<Esc>i
-		inoremap '' '_'<Esc>hr
+		nmap <Leader>gc <Plug>(go-coverage-toggle)
+		nmap <Leader>gd <Plug>(go-doc)
+		nmap <Leader>gi <Plug>(go-info)
 		set list
 		let g:go_fmt_autosave = 0
 		let g:go_fmt_options = "-s -w"
@@ -91,6 +79,11 @@ if &runtimepath =~ 'vim-go'
 		" let g:go_fmt_command = "GoImports"
 		" simplify code when formatting
 		autocmd BufWritePre *.go call FormatAndImports()
+
+		" some stuff from github.com/fatih/vim-go-tutorial
+		let g:go_list_type = "quickfix"
+		let g:go_highlight_build_constraints = 1
+
 	endfunction
 
 
@@ -219,7 +212,7 @@ if &runtimepath =~ 'neocomplete'
 		let g:neocomplete#sources = {}
 	endif
 	let g:neocomplete#sources._ = ['buffer', 'member', 'tag', 'file', 'dictionary']
-	let g:neocomplete#sources.go = ['omni', 'neosnippet']
+	let g:neocomplete#sources.go = ['omni']
 
 	" enable heavy omni completion
 	" if !exists('g:neocomplete#force_omni_input_patterns')
@@ -228,15 +221,15 @@ if &runtimepath =~ 'neocomplete'
 	" let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
 
 	" Plugin key-mappings.
-	inoremap <expr><C-g> neocomplete#undo_completion()
-	inoremap <expr><C-l> neocomplete#complete_common_string()
+	"inoremap <expr><C-g> neocomplete#undo_completion()
+	"inoremap <expr><C-l> neocomplete#complete_common_string()
 
-	imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-	smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-	xmap <C-k>     <Plug>(neosnippet_expand_target)
-	nnoremap <leader>es :NeoSnippetEdit<CR>
+	"imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+	"smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+	"xmap <C-k>     <Plug>(neosnippet_expand_target)
+	"nnoremap <leader>es :NeoSnippetEdit<CR>
 
-	let g:neosnippet#snippets_directory = "~/.vim/neosnippets"
+	"let g:neosnippet#snippets_directory = "~/.vim/neosnippets"
 
 	" For conceal markers.
 	" if has('conceal')
@@ -257,7 +250,23 @@ set lazyredraw
 map <Leader>te :tabnew<cr>
 map <Leader>to :tabonly<cr>
 map <Leader>tm :tabmove<Space>
-map <Leader>tn :tabnext<cr>
-map <Leader>tp :tabprevious<cr>
+" no need for that: gt and gT are doing the trick
+" map <Leader>tn :tabnext<cr>
+" map <Leader>tp :tabprevious<cr>
+
+" just a test from: http://vim.wikia.com/wiki/Automatically_append_closing_characters
+function! NiceCurlyBrace()
+	if &runtimepath =~ 'vim-go'
+		normal! a{
+		if (&ft=="go" && getline('.') =~ 'func\|if\|for\|type\|else')
+			execute "normal! a\<CR>}"
+			execute "normal! O\<Space>\<BS>"
+		endif
+	endif
+endfunction
+
+inoremap { <Esc>:call NiceCurlyBrace()<CR>a
+inoremap "" ""<Esc>i
+inoremap '' '_'<Esc>hr
 
 " vim: set list ts=2 sw=2:
