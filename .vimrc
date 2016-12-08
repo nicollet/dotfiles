@@ -70,7 +70,9 @@ if &runtimepath =~ 'vim-go'
 		nmap <Leader>ga <Plug>(go-alternate-edit)
 		nmap <Leader>gc <Plug>(go-coverage-toggle)
 		nmap <Leader>gd <Plug>(go-doc)
+		nmap <Leader>gD <Plug>(go-describe)
 		nmap <Leader>gi <Plug>(go-info)
+
 		set list
 		let g:go_fmt_autosave = 0
 		let g:go_fmt_options = "-s -w"
@@ -250,23 +252,106 @@ set lazyredraw
 map <Leader>te :tabnew<cr>
 map <Leader>to :tabonly<cr>
 map <Leader>tm :tabmove<Space>
-" no need for that: gt and gT are doing the trick
-" map <Leader>tn :tabnext<cr>
-" map <Leader>tp :tabprevious<cr>
 
-" just a test from: http://vim.wikia.com/wiki/Automatically_append_closing_characters
-function! NiceCurlyBrace()
-	if &runtimepath =~ 'vim-go'
-		normal! a{
-		if (&ft=="go" && getline('.') =~ 'func\|if\|for\|type\|else')
-			execute "normal! a\<CR>}"
-			execute "normal! O\<Space>\<BS>"
-		endif
-	endif
+function! GitGrep()
+	echom "gitgrep"
+	execute "normal! :Grep <cwords -- './*' ':!*.js' ':!*.css'<cr>"
+	execute "normal! :copen<cr>"
 endfunction
 
-inoremap { <Esc>:call NiceCurlyBrace()<CR>a
-inoremap "" ""<Esc>i
-inoremap '' '_'<Esc>hr
+nnoremap <Leader>] :call GitGrep()<cr>
+
+" temp
+" au BufWritePost *.html make
+
+command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis 
+	\ | wincmd p | diffthis
+
+" toggle quickfix with q
+function! Qf_toggle()
+	for i in range(1, winnr('$'))
+		let bnum = winbufnr(i)
+		if getbufvar(bnum, '&buftype') == 'quickfix'
+			cclose
+			return
+		elseif getbufvar(bnum, '&buftype') == 'help'
+			helpc
+			return
+		endif
+	endfor
+	copen
+endfunction
+
+" remove quickfix or help screen with q
+nnoremap <Leader>q q
+nnoremap q :call Qf_toggle()<cr>
+
+" Comments
+function! s:GetMinOffset(firstl, lastl)
+	let l:list = []
+	for l:ln in range(a:firstl, a:lastl)
+		let l:match = match(getline(l:ln), '\S')
+		if l:match != -1
+			let l:list += [l:match]
+		endif
+	endfor
+	return min(l:list)
+endfunction
+
+let g:comment_type = {'vim': '"', 'sh': '#', 'python': '#'}
+
+function! s:GetComment()
+	if has_key(g:comment_type, &filetype)
+		return g:comment_type[&filetype]
+	endif
+	return '//'
+endfunction
+
+function! Comment() range
+	let l:oldpos = getpos('.')
+	let l:comment = s:GetComment()
+
+	" get the minimum offset
+	let l:offset = s:GetMinOffset(a:firstline, a:lastline)
+
+	for l:line in range(a:firstline, a:lastline)
+		call cursor(l:line, offset + 1)
+		let l:pos = getcurpos()
+		execute "normal! i" . comment . " "
+		if l:pos[2] != offset + 1
+			execute "normal! =="
+		endif
+		call setline(l:line, substitute(getline("."), '\s*$', '', ''))
+	endfor
+	call setpos('.', l:oldpos)
+endfunction
+
+function! Uncomment() range
+	let l:oldpos = getpos('.')
+	let l:comment = s:GetComment()
+	
+	for l:line in range(a:firstline, a:lastline)
+		call cursor(l:line, 1)
+		let l:found = search(comment, 'c', l:line)
+		if l:found != 0
+			execute "normal! " . strlen(l:comment) . "x"
+			" remove the last space
+			if getchar(".") == ' '
+				execute "normal! x"
+			endif
+		endif
+	endfor
+	call setpos('.', l:oldpos)
+endfunction
+
+command! -range Comment <line1>,<line2>call Comment()
+command! -range Uncomment <line1>,<line2>call Uncomment()
+
+vmap <Leader>cc :Comment<cr>
+vmap <Leader>cu :Uncomment<cr>
+nmap <Leader>cc :Comment<cr>
+nmap <Leader>cu :Uncomment<cr>
+
+" comment the current line/region
 
 " vim: set list ts=2 sw=2:
