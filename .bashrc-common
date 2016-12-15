@@ -14,6 +14,9 @@ NC='\[\e[0m\]'
 source $HOME/bin/func.sh
 
 prepend PATH "$HOME/bin:/usr/local/sbin:/usr/local/bin"
+export PATH
+export GOPATH=$HOME
+
 shopt -s extglob
 
 # Display matches for ambiguous patterns at first tab press

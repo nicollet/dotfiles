@@ -16,7 +16,6 @@ alias vim='/usr/local/bin/vim'
 alias vi='/usr/local/bin/vim'
 
 export EDITOR=/usr/local/bin/vim
-export GOPATH=$HOME
 
 # docker run for fpm
 # docker run -v $HOME:$HOME --name fpm --rm -t -i xa/fpm bash
