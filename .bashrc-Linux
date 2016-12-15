@@ -4,6 +4,9 @@
 [ `id -u` == '0' ] && DOLLAR="${RED}#${NC} " || DOLLAR='$ '
 PS1="\u@${WRAP}${GREEN}\h${NC}:\w${NC}${DOLLAR}"
 
+alias vi=vim
+export EDITOR=/usr/bin/vim
+
 CLICOLOR=yes           # Enable color ls output
 completion=/usr/share/doc/git-1.7.1/contrib/completion/git-completion.bash
 test -e $completion && source $completion
