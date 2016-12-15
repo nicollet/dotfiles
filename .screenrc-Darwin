@@ -1,0 +1,47 @@
+hardstatus alwayslastline "%-Lw%{= BW}%50>%n%f* %t%{-}%+Lw%<"
+#hardstatus alwayslastline "%-Lw%{= bw}%50>%n%f* %t%{-}%+Lw%< %{= wr} %80< %=%c %d-%m"
+hardstatus alwayslastline "%{= wr} %-Lw%{= bw}%50>%n%f* %t%{-}%+Lw%< %80< %=%c %d-%m"
+
+#hardstatus alwayslastline "%1`%{=}%{+b kR}%H %{+b kY}%d %M %{+b kG}%0c%019= %{=} %{+b kB}%-Lw%50>%{+b kW}%n*%f %t%? (%u)%?%{+b kB}%+Lw%-0="
+
+#hardstatus alwayslastline "BackTick Output%02=%{=}%{+b kR}%H%08=%{.Y}%M %d%014=%{.G}%0c%019= %{=} %{+b kB}%-Lw%50>%{.W}%n*%f %t%?(%u)%?%{.B}%+Lw%-0="
+
+#hardstatus alwayslastline "BackTick Output%010=%{=}%{+b kR}%H%+06=%{.Y}%M %d%+06=%{.G}%0c%+05= %{=} %{+b kB}%-Lw%50>%{.W}%n*%f %t%?   (%u)%?%{.B}%+Lw%-0="
+
+# a tester
+# Green text, time, and date; windows in blue:
+# hardstatus alwayslastline "%{=b}%{G} Screen(s): %{b}%w %=%{kG}%C%A  %D, %M/%d/%Y "
+
+bindkey -k k7 prev
+bindkey -k k8 next
+
+# ===============================================================
+# STARTUP of programs in an extra window:
+# ===============================================================
+# Uncomment one/some following lines to automatically let
+# SCREEN start some programs in the given window numbers:
+select 2
+
+# ===============================================================
+# VARIABLES - Number values
+# ===============================================================
+defscrollback         300            # default: 100
+
+# And when using "zombie mode" then the window will stay
+# and you can resurrect them with the CTRL-SPACE command.
+# cool! :-)
+#
+# enable "zombie mode":
+zombie z
+startup-message off
+
+# use the PgUp and PgDn keys to enter copy mode
+# and page through the window backlog:
+#bindkey -k kP copy
+
+# censé éviter les crash
+defflow off
+escape ^Jj
+
+# this is on mac only
+shell "/usr/local/bin/bash"
