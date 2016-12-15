@@ -5,7 +5,7 @@ SRC="$HOME/stack/git/Github/nicollet/dotfiles/.git"
 
 curl -s bosun/api/host | \
   jq '.[]|select( (.OS.Version|strings|test("CentOS")) and (.Name|test("ny-|co-")) )|.Name' | \
-  head -1 | \
+  #head -1 | \
   while read i ; do
     host=${i//\"}
     rsync -ae "ssh $SSH_OPT" --delete $SRC/ $host:/home/xnicollet/.git/

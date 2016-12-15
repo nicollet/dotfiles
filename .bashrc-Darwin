@@ -1,6 +1,7 @@
 # have colors on MacOsX
 export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
+export SCREENRC=.screenrc-Darwin
 
 export PS1="\u@\h:\w"'${debian_chroot:+($debian_chroot)}'"\$ "
 
