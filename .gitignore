@@ -4,3 +4,7 @@ README.md
 .lesshst
 .ssh
 .viminfo
+.cache
+docker-edge-network/
+pkg
+src
