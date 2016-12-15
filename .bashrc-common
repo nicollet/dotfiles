@@ -5,7 +5,15 @@ GREEN='\[\e[32m\]'
 RED='\[\e[31m\]'
 NC='\[\e[0m\]'
 
-export PATH="$HOME/bin:/usr/local/sbin:/usr/local/bin:$PATH"
+# prepend() {
+#   local var=shift value=shift
+#   local oldvalue=`eval "echo \$$var"`
+#   echo $oldvalue | grep -q -- "$value" || $var="$value:$oldvalue"
+# }
+
+source $HOME/bin/func.sh
+
+prepend PATH "$HOME/bin:/usr/local/sbin:/usr/local/bin"
 shopt -s extglob
 
 # Display matches for ambiguous patterns at first tab press

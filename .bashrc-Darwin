@@ -5,32 +5,13 @@ export SCREENRC=.screenrc-Darwin
 
 export PS1="\u@\h:\w"'${debian_chroot:+($debian_chroot)}'"\$ "
 
-ssh() {
-	realargs="$@"
-	host="${@:-1}"
-	while [ $# -gt 0 ]; do
-		if [ "${1:0:1}" == "-" ] ; then # arguments
-			# echo arg $1
-			[[ "$1" == -[bcDEeFIiLlmOopQRSWw] ]] && { 
-				shift # ... with params
-				# echo with param
-			}
-			shift
-		else
-			host=$1
-			# echo host: $host
-			break
-		fi
-	done
-	set -- $realargs
-	echo -n -e "\033k${host}\033\\"
-	/usr/bin/ssh $realargs
-	echo -n -e "\033kbash\033\\"
-}
+alias ssh=my_ssh
 
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+# [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
 
-export PATH="$PATH:/usr/local/go/bin" # Add RVM to PATH for scripting
+append PATH "/usr/local/go/bin"
+export PATH
+
 alias vim='/usr/local/bin/vim'
 alias vi='/usr/local/bin/vim'
 
