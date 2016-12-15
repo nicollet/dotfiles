@@ -18,8 +18,8 @@ shopt -s histappend
 shopt -s cmdhist
 
 # Make sort work like it did in the 1970s:
-export LC_ALL=C
-export LANG='en_US.UTF-8'
+# export LC_ALL=C
+# export LANG='en_US.UTF-8'
 
 alias sd='screen -DR'
 
