@@ -1,0 +1,3 @@
+[submodule ".vim/bundle/nicecom.vim"]
+	path = .vim/bundle/nicecom.vim
+	url = git@github.com:nicollet/nicecom.vim.git
