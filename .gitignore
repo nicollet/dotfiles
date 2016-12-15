@@ -63,3 +63,4 @@ perso/
 stack/
 tmp/
 go/
+.config/
