@@ -1,3 +1,39 @@
 [submodule ".vim/bundle/nicecom.vim"]
 	path = .vim/bundle/nicecom.vim
 	url = git@github.com:nicollet/nicecom.vim.git
+[submodule ".vim/bundle/ctrlp.vim"]
+	path = .vim/bundle/ctrlp.vim
+	url = git@github.com:ctrlpvim/ctrlp.vim.git
+[submodule ".vim/bundle/neocomplete.vim"]
+	path = .vim/bundle/neocomplete.vim
+	url = https://github.com/Shougo/neocomplete.vim.git
+[submodule ".vim/bundle/splitjoin.vim"]
+	path = .vim/bundle/splitjoin.vim
+	url = git@github.com:AndrewRadev/splitjoin.vim.git
+[submodule ".vim/bundle/syntastic"]
+	path = .vim/bundle/syntastic
+	url = https://github.com/scrooloose/syntastic.git
+[submodule ".vim/bundle/tabular"]
+	path = .vim/bundle/tabular
+	url = git://github.com/godlygeek/tabular.git
+[submodule ".vim/bundle/tagbar"]
+	path = .vim/bundle/tagbar
+	url = https://github.com/majutsushi/tagbar
+[submodule ".vim/bundle/ultisnips"]
+	path = .vim/bundle/ultisnips
+	url = git@github.com:SirVer/ultisnips.git
+[submodule ".vim/bundle/vim-fugitive"]
+	path = .vim/bundle/vim-fugitive
+	url = git://github.com/tpope/vim-fugitive.git
+[submodule ".vim/bundle/vim-go"]
+	path = .vim/bundle/vim-go
+	url = https://github.com/fatih/vim-go.git
+[submodule ".vim/bundle/vim-jdaddy"]
+	path = .vim/bundle/vim-jdaddy
+	url = git://github.com/tpope/vim-jdaddy.git
+[submodule ".vim/bundle/vim-livedown"]
+	path = .vim/bundle/vim-livedown
+	url = git://github.com/shime/vim-livedown.git
+[submodule ".vim/bundle/vim-puppet"]
+	path = .vim/bundle/vim-puppet
+	url = git@github.com:rodjek/vim-puppet.git
