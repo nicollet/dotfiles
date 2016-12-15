@@ -9,5 +9,5 @@ curl -s bosun/api/host | \
   while read i ; do
     host=${i//\"}
     rsync -ae "ssh $SSH_OPT" --delete $SRC/ $host:/home/xnicollet/.git/
-    ssh -nA $SSH_OPT $host "git reset --hard origin/master" # ;git submodule init; git submodule update"
+    ssh -nA $SSH_OPT $host "git reset --hard origin/master ; git submodule init; git submodule update"
   done
