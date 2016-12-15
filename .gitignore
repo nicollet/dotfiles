@@ -44,7 +44,6 @@ src
 .vagrant/
 .vimgolf/
 .viminfo.tmp
-.vimperator/
 AndroidStudioProjects/
 Applications/
 Desktop/

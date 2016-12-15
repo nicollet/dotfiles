@@ -1,0 +1,48 @@
+" my own stuff
+
+" clear everything to avoid troubles from loading rc
+" several times
+mapclear
+cmapclear
+imapclear
+
+:cmap jk <Esc>
+:imap jk <Esc>
+
+:map <C-g> <Esc>
+:imap <C-g> <Esc>
+:cmap <C-g> <Esc>
+
+" shortcut to submit the first html form:
+:map s :js content.document.forms[0].submit();<CR> 
+
+" search through google
+
+" scroll faster
+:noremap j 2j
+:noremap k 2k
+
+" don't focus the new opened tab automatically
+" set activate=
+
+" Need <CR> anytime in hints mode
+" set followhints=1
+
+" Don't focus any "input" elements automatically when open pages.
+set focuscontent
+
+" hide close buttons
+set! browser.tabs.closeButtons=2
+
+" open tab in the background
+" set! browser.tabs.loadDivertedInBackground=true
+
+bmark -t "Google Feeling Lucky Search" -k "gl" http://www.google.com/search?q=%s&btnI=I%27m+Feeling+Lucky
+bmark -t "Google Search" -k "g" http://www.google.com/search?q=%s
+bmark -t "Golang search" -k "gol" http://www.google.com/search?q=golang%20%s&btnI=I%27m+Feeling+Lucky
+
+ignorekeys clear
+ignorekeys add -except=<C-n>,<C-p> docs\.google\.com
+ignorekeys add -except=<C-n>,<C-p> mail\.google\.com
+
+" vim: set ft=vimperator:
