@@ -22,7 +22,6 @@ set nohls
 set listchars=tab:»\ ,trail:.,nbsp:~
 
 "  " should be called before go plugin is launched
-"  function! GoHtml()
 "  	GoFmt
 "  	if !empty(b:current_syntax)
 "  		unlet b:current_syntax
@@ -72,15 +71,16 @@ if &runtimepath =~ 'vim-go'
 		nmap <Leader>gd <Plug>(go-doc)
 		nmap <Leader>gD <Plug>(go-describe)
 		nmap <Leader>gi <Plug>(go-info)
+		nmap <Leader>gI <plug>(go-imports)
 
 		set list
-		let g:go_fmt_autosave = 0
+		let g:go_fmt_autosave = 1
 		let g:go_fmt_options = "-s -w"
 
 		" for golang: automatically run GoImports
-		" let g:go_fmt_command = "GoImports"
+		let g:go_fmt_command = "GoFmt"
 		" simplify code when formatting
-		autocmd BufWritePre *.go call FormatAndImports()
+		" autocmd BufWritePre *.go call FormatAndImports()
 
 		" some stuff from github.com/fatih/vim-go-tutorial
 		let g:go_list_type = "quickfix"
@@ -179,9 +179,9 @@ set wildmode=list:longest,full
 set wildignore+=.o,~,pyc
 set wildignore+=.git,.hg,.svn
 
-let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_always_populate_loc_list = 0
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
 
 " just a try: let's forget ;
@@ -204,40 +204,40 @@ endfunction
 nnoremap <silent> yo :call <SID>setup_paste()<CR>o
 nnoremap <silent> yO :call <SID>setup_paste()<CR>O
 
-set completeopt=menu,menuone
-if &runtimepath =~ 'neocomplete'
-	let g:acp_enableAtStartup = 0
-	let g:neocomplete#enable_at_startup = 1
-	let g:neocomplete#enable_smart_case = 1
-
-	if !exists('g:neocomplete#sources')
-		let g:neocomplete#sources = {}
-	endif
-	let g:neocomplete#sources._ = ['buffer', 'member', 'tag', 'file', 'dictionary']
-	let g:neocomplete#sources.go = ['omni']
-
-	" enable heavy omni completion
-	" if !exists('g:neocomplete#force_omni_input_patterns')
-	"	let g:neocomplete#force_omni_input_patterns = {}
-	" endif
-	" let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
-
-	" Plugin key-mappings.
-	"inoremap <expr><C-g> neocomplete#undo_completion()
-	"inoremap <expr><C-l> neocomplete#complete_common_string()
-
-	"imap <C-k>     <Plug>(neosnippet_expand_or_jump)
-	"smap <C-k>     <Plug>(neosnippet_expand_or_jump)
-	"xmap <C-k>     <Plug>(neosnippet_expand_target)
-	"nnoremap <leader>es :NeoSnippetEdit<CR>
-
-	"let g:neosnippet#snippets_directory = "~/.vim/neosnippets"
-
-	" For conceal markers.
-	" if has('conceal')
-		"set conceallevel=2 concealcursor=niv
-	"endif
-endif
+" set completeopt=menu,menuone
+" if &runtimepath =~ 'neocomplete'
+" 	let g:acp_enableAtStartup = 0
+" 	let g:neocomplete#enable_at_startup = 0
+" 	let g:neocomplete#enable_smart_case = 1
+"
+" 	if !exists('g:neocomplete#sources')
+" 		let g:neocomplete#sources = {}
+" 	endif
+" 	let g:neocomplete#sources._ = ['buffer', 'member', 'tag', 'file', 'dictionary']
+" 	let g:neocomplete#sources.go = ['omni']
+"
+" 	" enable heavy omni completion
+" 	" if !exists('g:neocomplete#force_omni_input_patterns')
+" 	"	let g:neocomplete#force_omni_input_patterns = {}
+" 	" endif
+" 	" let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
+"
+" 	" Plugin key-mappings.
+" 	"inoremap <expr><C-g> neocomplete#undo_completion()
+" 	"inoremap <expr><C-l> neocomplete#complete_common_string()
+"
+" 	"imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+" 	"smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+" 	"xmap <C-k>     <Plug>(neosnippet_expand_target)
+" 	"nnoremap <leader>es :NeoSnippetEdit<CR>
+"
+" 	"let g:neosnippet#snippets_directory = "~/.vim/neosnippets"
+"
+" 	" For conceal markers.
+" 	" if has('conceal')
+" 		"set conceallevel=2 concealcursor=niv
+" 	"endif
+" endif
 
 set splitright " split vertically to the right
 
@@ -275,7 +275,8 @@ function! Qf_toggle()
 			cclose
 			return
 		elseif getbufvar(bnum, '&buftype') == 'help'
-			helpc
+			" helpc " not supported in vim7
+			execute "bd " . bnum
 			return
 		endif
 	endfor
@@ -286,72 +287,13 @@ endfunction
 nnoremap <Leader>q q
 nnoremap q :call Qf_toggle()<cr>
 
-" Comments
-function! s:GetMinOffset(firstl, lastl)
-	let l:list = []
-	for l:ln in range(a:firstl, a:lastl)
-		let l:match = match(getline(l:ln), '\S')
-		if l:match != -1
-			let l:list += [l:match]
-		endif
-	endfor
-	return min(l:list)
-endfunction
-
-let g:comment_type = {'vim': '"', 'sh': '#', 'python': '#'}
-
-function! s:GetComment()
-	if has_key(g:comment_type, &filetype)
-		return g:comment_type[&filetype]
-	endif
-	return '//'
-endfunction
-
-function! Comment() range
-	let l:oldpos = getpos('.')
-	let l:comment = s:GetComment()
-
-	" get the minimum offset
-	let l:offset = s:GetMinOffset(a:firstline, a:lastline)
-
-	for l:line in range(a:firstline, a:lastline)
-		call cursor(l:line, offset + 1)
-		let l:pos = getcurpos()
-		execute "normal! i" . comment . " "
-		if l:pos[2] != offset + 1
-			execute "normal! =="
-		endif
-		call setline(l:line, substitute(getline("."), '\s*$', '', ''))
-	endfor
-	call setpos('.', l:oldpos)
-endfunction
-
-function! Uncomment() range
-	let l:oldpos = getpos('.')
-	let l:comment = s:GetComment()
-	
-	for l:line in range(a:firstline, a:lastline)
-		call cursor(l:line, 1)
-		let l:found = search(comment, 'c', l:line)
-		if l:found != 0
-			execute "normal! " . strlen(l:comment) . "x"
-			" remove the last space
-			if getchar(".") == ' '
-				execute "normal! x"
-			endif
-		endif
-	endfor
-	call setpos('.', l:oldpos)
-endfunction
-
-command! -range Comment <line1>,<line2>call Comment()
-command! -range Uncomment <line1>,<line2>call Uncomment()
-
-vmap <Leader>cc :Comment<cr>
-vmap <Leader>cu :Uncomment<cr>
-nmap <Leader>cc :Comment<cr>
-nmap <Leader>cu :Uncomment<cr>
-
 " comment the current line/region
+if &runtimepath =~ 'nicecom'
+	vnoremap <silent> <Leader>cc :NiceComment<cr>
+	vnoremap <silent> <Leader>cu :NiceUncomment<cr>
+	nnoremap <silent> <Leader>cc :NiceComment<cr>
+	nnoremap <silent> <Leader>cu :NiceUncomment<cr>
+endif
+
 
 " vim: set list ts=2 sw=2:
