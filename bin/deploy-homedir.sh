@@ -3,8 +3,15 @@
 SSH_OPT='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
 SRC="$HOME/stack/git/Github/nicollet/dotfiles/.git"
 
+[ "x$1" == "x--help" ] && {
+  echo "usage: `basename $0` [--help] FILTER_HOSTS"
+  echo "  FILTER_HOSTS: which hosts to deploy to (ex: xav). Default: all hosts: ny-|co-"
+  exit 0
+}
+[ -n "$1" ] && FILTER_HOSTS="$1" || FILTER_HOSTS="ny-|co-"
+
 curl -s bosun/api/host | \
-  jq '.[]|select( (.OS.Version|strings|test("CentOS")) and (.Name|test("ny-|co-")) )|.Name' | \
+  jq ".[]|select( (.OS.Version|strings|test(\"CentOS\")) and (.Name|test(\"$FILTER_HOSTS\")) )|.Name" | \
   #head -1 | \
   while read i ; do
     host=${i//\"}
