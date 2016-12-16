@@ -64,3 +64,5 @@ stack/
 tmp/
 go/
 .config/
+.bashrc-global
+
