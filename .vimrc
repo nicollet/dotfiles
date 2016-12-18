@@ -53,10 +53,10 @@ endfor
 let mapleader = "\<Space>"
 
 if &runtimepath =~ 'vim-go'
-	function! FormatAndImports()
-		GoFmt
-		GoImports
-	endfunction
+	" function! FormatAndImports()
+	" 	GoFmt
+	" 	GoImports
+	" endfunction
 
 	function! SetGoOptions()
 		nmap <Leader>gr <Plug>(go-run)
@@ -78,8 +78,6 @@ if &runtimepath =~ 'vim-go'
 		let g:go_fmt_options = "-s -w"
 
 		" for golang: automatically run GoImports
-		let g:go_fmt_command = "GoFmt"
-		" simplify code when formatting
 		" autocmd BufWritePre *.go call FormatAndImports()
 
 		" some stuff from github.com/fatih/vim-go-tutorial
