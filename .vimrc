@@ -154,6 +154,10 @@ if exists('SyntasticStatuslineFlag')
 	set statusline+=%{SyntasticStatuslineFlag()}
 	set statusline+=%*
 endif
+let g:syntastic_always_populate_loc_list = 0
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
 
 set statusline+=%-3.3n\                      " buffer number
 set statusline+=%f\                          " file name
@@ -176,11 +180,6 @@ set wildmode=list:longest,full
 " Ignore compiled files
 set wildignore+=.o,~,pyc
 set wildignore+=.git,.hg,.svn
-
-let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
 
 " just a try: let's forget ;
 nnoremap ; :
