@@ -7,7 +7,7 @@ set-alias vim "C:/Program Files (x86)/Vim/Vim74/./vim.exe"
 
 # did once: Install-Module PSReadline
 # see: https://github.com/lzybkr/PSReadLine
-if ($host.Name -eq "ConsoleHost')
+if ($host.Name -eq 'ConsoleHost')
 {
 	Import-Module PSReadline
 	Set-PSReadlineOption -EditMode Emacs
