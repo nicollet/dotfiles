@@ -39,8 +39,6 @@ if exists("*pathogen#infect")
 	call pathogen#infect()
 endif
 
-filetype plugin indent on
-
 inoremap jk <Esc>l
 
 " remove arrows
@@ -258,6 +256,15 @@ endfunction
 
 nnoremap <Leader>] :call GitGrep()<cr>
 
+" Set scripts to be executabe from the shell
+au! BufWritePost *
+au BufWritePost *
+	\ if getline(1) =~ "^#!.*/bin/" |
+	\ redraw! |
+	\ echo "chmod u+x <afile>" |
+	\ silent execute "!chmod u+x <afile>" |
+	\ endif
+
 " temp
 " au BufWritePost *.html make
 
@@ -291,6 +298,34 @@ if &runtimepath =~ 'nicecom'
 	nnoremap <silent> <Leader>cc :NiceComment<cr>
 	nnoremap <silent> <Leader>cu :NiceUncomment<cr>
 endif
+
+function! WriteRemote()
+	let pat = '^scp://\(.\{-}\)/'
+	let l = matchlist( bufname('%'), pat)
+	if len(l) < 2
+		echom "could not get remote host"
+		return
+	end
+	let remote = l[1]
+	let temp_file = expand('%:t')
+	let dest_file = substitute( bufname('%'), pat, '', '')
+
+	execute "write! scp://" . remote . "//tmp/" . temp_file
+	execute "!ssh -t " . remote .
+		\ " 'sudo tee >/dev/null -- " . dest_file .
+		\ " </tmp/".temp_file .
+		\ " ; rm -- /tmp/".temp_file . "'"
+endfunction
+
+" function! SetExecutableBit()
+" 	let fname = expand("%:p")
+" 	checktime
+" 	execute "au FileChangedShell " . fname . " :echo"
+" 	silent !chmod a+x %
+" 	checktime
+" 	execute "au! FileChangedShell " . fname
+" endfunction
+" command! Xbit call SetExecutableBit()
 
 
 " vim: set list ts=2 sw=2:
