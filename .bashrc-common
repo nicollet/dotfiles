@@ -48,3 +48,4 @@ HISTIGNORE="exit:ls:bg:fg:history:clear"
 HISTTIMEFORMAT='%F %T '
 
 alias sudo="sudo -E"
+alias cdd="cd"
