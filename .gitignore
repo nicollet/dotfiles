@@ -9,6 +9,17 @@ docker-edge-network/
 pkg
 src
 
+# ruby gem odities
+bin/dotenv
+bin/fpm
+bin/minitar
+bin/mustache
+bin/please-manage-user
+bin/pleaserun
+bin/rubygems-cabin-test
+bin/update_rubygems
+
+
 # mac stuff
 .CFUserTextEncoding
 .DS_Store
