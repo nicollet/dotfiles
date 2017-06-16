@@ -274,7 +274,7 @@ command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis
 " toggle quickfix with q
 function! Qf_toggle()
 	let godoc = bufnr('Godoc')
-	if godoc != ""
+	if godoc != "-1"
 		execute "bd " . godoc
 		return
 	endif
@@ -304,23 +304,23 @@ if &runtimepath =~ 'nicecom'
   nnoremap <silent> <Leader>cu :NiceUncomment<cr>
 endif
 
-function! WriteRemote()
-  let pat = '^scp://\(.\{-}\)/'
-  let l = matchlist( bufname('%'), pat)
-  if len(l) < 2
-    echom "could not get remote host"
-    return
-  end
-  let remote = l[1]
-  let temp_file = expand('%:t')
-  let dest_file = substitute( bufname('%'), pat, '', '')
-
-  execute "write! scp://" . remote . "//tmp/" . temp_file
-  execute "!ssh -t " . remote .
-    \ " 'sudo tee >/dev/null -- " . dest_file .
-    \ " </tmp/".temp_file .
-    \ " ; rm -- /tmp/".temp_file . "'"
-endfunction
+" function! WriteRemote()
+"   let pat = '^scp://\(.\{-}\)/'
+"   let l = matchlist( bufname('%'), pat)
+"   if len(l) < 2
+"     echom "could not get remote host"
+"     return
+"   end
+"   let remote = l[1]
+"   let temp_file = expand('%:t')
+"   let dest_file = substitute( bufname('%'), pat, '', '')
+"
+"   execute "write! scp://" . remote . "//tmp/" . temp_file
+"   execute "!ssh -t " . remote .
+"     \ " 'sudo tee >/dev/null -- " . dest_file .
+"     \ " </tmp/".temp_file .
+"     \ " ; rm -- /tmp/".temp_file . "'"
+" endfunction
 
 " function! SetExecutableBit()
 "   let fname = expand("%:p")
@@ -333,56 +333,56 @@ endfunction
 " command! Xbit call SetExecutableBit()
 
 
-function! MarkdownFolds()
-    let thisline = getline(v:lnum)
-    if match(thisline, '^##') >= 0
-        return ">2"
-    elseif match(thisline, '^#') >= 0
-        return ">1"
-    else
-        return "="
-    endif
-endfunction
+" function! MarkdownFolds()
+"     let thisline = getline(v:lnum)
+"     if match(thisline, '^##') >= 0
+"         return ">2"
+"     elseif match(thisline, '^#') >= 0
+"         return ">1"
+"     else
+"         return "="
+"     endif
+" endfunction
+"
+" setlocal foldmethod=expr
+" setlocal foldexpr=MarkdownFolds()
 
-setlocal foldmethod=expr
-setlocal foldexpr=MarkdownFolds()
-
-function! MarkdownFoldText()
-    "get first non-blank line
-    let fs = v:foldstart
-    while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
-    endwhile
-    if fs > v:foldend
-        let line = getline(v:foldstart)
-    else
-        let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
-    endif
-
-    let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
-    let foldSize = 1 + v:foldend - v:foldstart
-
-    let i = v:foldstart
-    let foldWords=0
-    while (i<v:foldend)
-      let lineWords = len(split(getline(i)))
-      let foldWords = foldWords + lineWords
-      let i += 1
-    endwhile
-    let wordCount = wordcount()["words"]
-
-    " let foldWords = v:foldend,v:foldstart!wc -w
-    let foldWordsStr = " " . foldWords . " w,"
-    let foldSizeStr = foldWordsStr . foldSize . " lines "
-    let foldLevelStr = repeat("+--", v:foldlevel)
-    let foldPercentage = printf("[%.1f", (foldWords*1.0)/wordCount*100) . "%] "
-    " let expansionString = "."
-    let expansionString = repeat(".", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
-    return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
-    " return line . expansionString . foldSizeStr . foldPercentage . foldWordsStr . foldLevelStr
-    " return line . "......" . foldSizeStr . foldPercentage . foldLevelStr
-endfunction
-
-setlocal foldtext=MarkdownFoldText()
+" function! MarkdownFoldText()
+"     "get first non-blank line
+"     let fs = v:foldstart
+"     while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
+"     endwhile
+"     if fs > v:foldend
+"         let line = getline(v:foldstart)
+"     else
+"         let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
+"     endif
+"
+"     let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+"     let foldSize = 1 + v:foldend - v:foldstart
+"
+"     let i = v:foldstart
+"     let foldWords=0
+"     while (i<v:foldend)
+"       let lineWords = len(split(getline(i)))
+"       let foldWords = foldWords + lineWords
+"       let i += 1
+"     endwhile
+"     let wordCount = wordcount()["words"]
+"
+"     " let foldWords = v:foldend,v:foldstart!wc -w
+"     let foldWordsStr = " " . foldWords . " w,"
+"     let foldSizeStr = foldWordsStr . foldSize . " lines "
+"     let foldLevelStr = repeat("+--", v:foldlevel)
+"     let foldPercentage = printf("[%.1f", (foldWords*1.0)/wordCount*100) . "%] "
+"     " let expansionString = "."
+"     let expansionString = repeat(".", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
+"     return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+"     " return line . expansionString . foldSizeStr . foldPercentage . foldWordsStr . foldLevelStr
+"     " return line . "......" . foldSizeStr . foldPercentage . foldLevelStr
+" endfunction
+"
+" setlocal foldtext=MarkdownFoldText()
 
 
 " vim: set list ts=2 sw=2:
