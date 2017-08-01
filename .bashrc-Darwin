@@ -35,7 +35,7 @@ shopt -s cdspell 2> /dev/null
 
 alias mount="mount | column -t"
 
-export VIMPUPPET="~/stack/git/gitlab/puppet/modules/accounts/files/xnicollet/.vimrc"
-alias diffvimrc="vimdiff ~/.vimrc ${VIMPUPPET}"
-alias updatevimrc="cp ~/.vimrc ${VIMPUPPET}"
+#export VIMPUPPET="~/stack/git/gitlab/puppet/modules/accounts/files/xnicollet/.vimrc"
+#alias diffvimrc="vimdiff ~/.vimrc ${VIMPUPPET}"
+#alias updatevimrc="cp ~/.vimrc ${VIMPUPPET}"
 
