@@ -96,6 +96,10 @@ augroup puppet
   au FileType puppet setl list ts=2 sw=2 et
 augroup end
 
+augroup json
+	au FileType json setl list ts=2 sw=2 et
+augroup end
+
 augroup vim
   au FileType vim setl list ts=2 sw=2 noet
 augroup end
@@ -303,6 +307,8 @@ if &runtimepath =~ 'nicecom'
   nnoremap <silent> <Leader>cc :NiceComment<cr>
   nnoremap <silent> <Leader>cu :NiceUncomment<cr>
 endif
+
+
 
 " function! WriteRemote()
 "   let pat = '^scp://\(.\{-}\)/'
