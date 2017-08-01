@@ -1,0 +1,14 @@
+#! /bin/bash
+
+SSH_OPT='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+FILTER_HOSTS="ny-|co-"
+
+curl -s -H'X-Access-Token= [token]' https://bosun/api/host --insecure | \
+  jq ".[]|select( (.OS.Version|strings|test(\"CentOS\")) and (.Name|test(\"$FILTER_HOSTS\")) )|.Name" | \
+  # head -1 | \
+  while read i ; do
+    host=${i//\"}
+    echo "* $host *"
+    ssh -nA $SSH_OPT $host "yum makecache fast"
+  done
+

@@ -39,6 +39,7 @@ bin/update_rubygems
 .gnupg/
 .gradle/
 .irb-history
+.rbenv
 .local/
 .mindterm/
 .mkshrc
