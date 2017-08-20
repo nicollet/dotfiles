@@ -92,6 +92,10 @@ if &runtimepath =~ 'vim-go'
   "  augroup end
 endif
 
+augroup yaml
+	autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+augroup end
+
 augroup puppet
   au FileType puppet setl list ts=2 sw=2 et
 augroup end
@@ -389,6 +393,11 @@ endif
 " endfunction
 "
 " setlocal foldtext=MarkdownFoldText()
+
+" need backupskip for bosun, which is watching a file when launched with -w
+let &backupskip .= ',' . escape(expand('$HOME'), '\') . '/src/bosun.org/cmd/bosun/*.go'
+let &backupskip .= ',' . escape(expand('$HOME'), '\') . '/src/bosun.org/cmd/bosun/web/static/templates/*.html'
+let &backupskip .= ',' . escape(expand('$HOME'), '\') . '/src/bosun.org/cmd/bosun/web/static/js/*.ts'
 
 
 " vim: set list ts=2 sw=2:
