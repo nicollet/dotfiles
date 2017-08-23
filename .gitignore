@@ -79,3 +79,5 @@ go/
 .bashrc-global
 
 .cdd_path
+bin/strength
+

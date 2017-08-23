@@ -59,11 +59,11 @@ export -f cdp > /dev/null
 unalias cdrm 2> /dev/null
 cdrm() {
   local filter=""
-  [ -n "$1" ] && filter='-q $1'
-  local to_rm=`fzf +m -q $filter < $cdpath`
+  [ -n "$1" ] && filter="-q $1"
+  local to_rm=`fzf +m $filter < $cdpath`
   # https://unix.stackexchange.com/a/204378/144167
   [ -n "$to_rm" ] && {
-  cat < $cdpath | grep -v -F -x -- "$to_rm"
+    cat < $cdpath | grep -v -F -x -- "$to_rm"
     perl -e 'truncate STDOUT, tell STDOUT'
   } 1<> $cdpath
 }
