@@ -78,3 +78,4 @@ go/
 .config/
 .bashrc-global
 
+.cdd_path

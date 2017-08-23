@@ -39,3 +39,38 @@ alias mount="mount | column -t"
 #alias diffvimrc="vimdiff ~/.vimrc ${VIMPUPPET}"
 #alias updatevimrc="cp ~/.vimrc ${VIMPUPPET}"
 
+cdpath=`realpath ~/.cdd_path`
+[ -f "$cdpath" ] || touch $cdpath
+unalias cdd 2> /dev/null
+cdd() {
+  [ -n "$1" ] || return
+  local dest_dir=$(sed 's/\s*#.*//' < $cdpath | grep -v '^$' | fzf +m +s -1 -q $1 )
+  [ -n "$dest_dir" ] && cd "$dest_dir"
+}
+export -f cdd > /dev/null
+
+unalias cdp 2> /dev/null
+cdp() {
+  [ -n "$1" ] && dir=`realpath "$1"` || dir=`pwd`
+  grep -q -F -x "$dir" $cdpath || echo -e "$dir" >> $cdpath
+}
+export -f cdp > /dev/null
+
+unalias cdrm 2> /dev/null
+cdrm() {
+  local filter=""
+  [ -n "$1" ] && filter='-q $1'
+  local to_rm=`fzf +m -q $filter < $cdpath`
+  # https://unix.stackexchange.com/a/204378/144167
+  [ -n "$to_rm" ] && {
+  cat < $cdpath | grep -v -F -x -- "$to_rm"
+    perl -e 'truncate STDOUT, tell STDOUT'
+  } 1<> $cdpath
+}
+export -f cdrm > /dev/null
+
+unalias cdls 2> /dev/null
+cdls() {
+  cat $cdpath
+}
+export -f cdls > /dev/null
