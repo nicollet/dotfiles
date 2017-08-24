@@ -73,7 +73,7 @@ macports/
 old/
 perso/
 stack/
-tmp/
+./tmp/
 go/
 .config/
 .bashrc-global

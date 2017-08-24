@@ -8,6 +8,9 @@ syntax sync minlines=512 " start highlighting from 512 lines backward
 set synmaxcol=300 " do noe highlight very long lines
 set bg=dark
 
+let g:airline_powerline_fonts = 1
+" set guifont=Meslo\ LG\ S\ Regular\ for\ Powerline:h20
+
 filetype plugin indent on
 
 au BufRead,BufNewFile Vagrantfile setfiletype ruby
@@ -20,6 +23,9 @@ set nohls
 " set list | set nolist
 " set listchars=tab:\|-,trail:.
 set listchars=tab:»\ ,trail:.,nbsp:~
+
+" this is temporary: to get 256 colors
+set t_Co=256
 
 "  " should be called before go plugin is launched
 "    GoFmt
@@ -394,11 +400,20 @@ endif
 "
 " setlocal foldtext=MarkdownFoldText()
 
-" need backupskip for bosun, which is watching a file when launched with -w
-" let &backupskip .= ',' . escape(expand('$HOME'), '\') . '/src/bosun.org/cmd/bosun/*.go'
-" let &backupskip .= ',' . escape(expand('$HOME'), '\') . '/src/bosun.org/cmd/bosun/web/static/templates/*.html'
-" let &backupskip .= ',' . escape(expand('$HOME'), '\') . '/src/bosun.org/cmd/bosun/web/static/js/*.ts'
+
+" do backups, and recovery files
+set backup
+set backupdir=~/.vim/backup,~/tmp " backup files
+set directory=~/.vim/tmp,~/tmp " temp files
+
+" skip backups for bosun -w, which watches files for writes
 set backupskip+=*/cmd/bosun/{*.go\\,web/static/{js/*.ts\\,templates/*.html}}
+
+set showcmd " show partial commands
+
+" reduce timeouts a bit
+set timeoutlen=500
+
 
 if v:version > 703 || v:version == 703 && has("patch541")
   set formatoptions+=j " Delete comment character when joining commented lines
