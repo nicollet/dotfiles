@@ -122,7 +122,7 @@ augroup bash
     nnoremap <return> :x<return>
     inoremap <return> <esc>:x<return>
   endfunction
-  au BufNewFile,BufRead bash-fc.* call RemapEnter()
+  au BufNewFile,BufRead bash-fc* call RemapEnter()
 augroup end
 
 " let's test hidden mode
