@@ -48,4 +48,9 @@ HISTIGNORE="exit:ls:bg:fg:history:clear"
 HISTTIMEFORMAT='%F %T '
 
 alias sudo="sudo -E"
-alias cdd="cd"
+# alias cdd="cd"
+
+# to launch vim
+bind '"\C-xe": edit-and-execute-command'
+bind '"\C-x;": edit-and-execute-command'
+

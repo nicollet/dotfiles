@@ -75,6 +75,4 @@ cdls() {
 }
 export -f cdls > /dev/null
 
-# to launch vim
-bind '"\C-xe": edit-and-execute-command'
 
