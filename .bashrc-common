@@ -54,3 +54,5 @@ alias sudo="sudo -E"
 bind '"\C-xe": edit-and-execute-command'
 bind '"\C-x;": edit-and-execute-command'
 
+# needed for vim backups
+mkdir -p ~/.vim/tmp
