@@ -40,46 +40,51 @@ alias mount="mount | column -t"
 #alias updatevimrc="cp ~/.vimrc ${VIMPUPPET}"
 
 update_cdstat() {
+  local max_stat=100
   [ "$1" == "" ] && return
-  newpath=`realpath $1`
+  local newpath=$1
   [ -f "~/.cdstat" ] || touch ~/.cdstat
   # count date_sec path
-  found=0
-  now=`date +%s`
-  {
-  while read count date path ; do
-    [ "$path" == "$newpath" ] && { ((count++)) ; found=1 ; }
-    echo "$count $now $path"
+  local found=0
+  local now=`date +%s`
+  local count date path
+  { while read count date path ; do
+    [ "$path" == "$newpath" ] && { ((count++)) ; date=$now ; found=1 ; }
+    echo "$count $date $path"
   done < ~/.cdstat
   [ "$found" -eq 0 ] && echo "1 $now $newpath"
-  } | sort -nr | tail -100 > ~/.cdstat.tmp
+  } | sort -nr | tail -$max_stat > ~/.cdstat.tmp
   sync
   mv ~/.cdstat{.tmp,}
 }
 
 cd() {
-  builtin cd $* && { [ "${1:0:1}" == "-" ] || update_cdstat $1 ; }
+  [[ "${1}" == -* || "$1" == "" ]] && { builtin cd $* ; return $? ; }
+  realpath=`realpath $1`
+  builtin cd $* && update_cdstat $realpath
 }
 
 cdpath=`realpath ~/.cdd_path`
 [ -f "$cdpath" ] || touch $cdpath
-unalias cdd 2> /dev/null
+
+_fzf_compgen_dir() {
+  sed 's/\s*#.*//' < $cdpath | grep -v '^$' | cat - <(cut -d' ' -f3- ~/.cdstat) | sort -u
+}
+
 cdd() {
-  [ -n "$1" ] || return
+  local query=""
+  [ -n "$1" ] && query="-q $1"
   local get_cdstat=""
-  local dest_dir=$(sed 's/\s*#.*//' < $cdpath | grep -v '^$' | cat - <(cut -d' ' -f3- ~/.cdstat) | fzf +m -1 -q $1 )
+  local fzf_options="+m -1 --tiebreak=end,index"
+  local dest_dir=`_fzf_compgen_dir | fzf $fzf_options $query`
   [ -n "$dest_dir" ] && cd "$dest_dir"
 }
-export -f cdd > /dev/null
 
-unalias cdp 2> /dev/null
 cdp() {
   [ -n "$1" ] && dir=`realpath "$1"` || dir=`pwd`
   grep -q -F -x "$dir" $cdpath || echo -e "$dir" >> $cdpath
 }
-export -f cdp > /dev/null
 
-unalias cdrm 2> /dev/null
 cdrm() {
   local filter=""
   [ -n "$1" ] && filter="-q $1"
@@ -90,12 +95,26 @@ cdrm() {
     perl -e 'truncate STDOUT, tell STDOUT'
   } 1<> $cdpath
 }
-export -f cdrm > /dev/null
 
-unalias cdls 2> /dev/null
 cdls() {
   cat $cdpath
 }
-export -f cdls > /dev/null
 
+# try a complete cdd
+_cdd() {
+  COMPREPLY=()
+  #local cur="${COMP_WORDS[COMP_CWORD]}"
+  #local prev="${COMP_WORDS[COMP_CWORD-1]}"
+  [ "$1" == "cdd" ] || return 0
+  local fzf="fzf --tiebreak=end,index -f $2"
+  [ "$2" == "" ] && fzf="cat"
+  readarray -t COMPREPLY < <(_fzf_compgen_dir | $fzf | sort -u)
+  #echo comreply0: ${COMREPLY[*]}
+  return 0
+}
+complete -F _cdd -o dirnames cdd
+# todo: cd
+# todo: normal completion suffix? ,,
+# todo: see double tab
 
+# [ -f ~/.fzf.bash ] && source ~/.fzf.bash
