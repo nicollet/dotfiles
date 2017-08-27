@@ -39,12 +39,35 @@ alias mount="mount | column -t"
 #alias diffvimrc="vimdiff ~/.vimrc ${VIMPUPPET}"
 #alias updatevimrc="cp ~/.vimrc ${VIMPUPPET}"
 
+update_cdstat() {
+  [ "$1" == "" ] && return
+  newpath=`realpath $1`
+  [ -f "~/.cdstat" ] || touch ~/.cdstat
+  # count date_sec path
+  found=0
+  now=`date +%s`
+  {
+  while read count date path ; do
+    [ "$path" == "$newpath" ] && { ((count++)) ; found=1 ; }
+    echo "$count $now $path"
+  done < ~/.cdstat
+  [ "$found" -eq 0 ] && echo "1 $now $newpath"
+  } | sort -nr | tail -100 > ~/.cdstat.tmp
+  sync
+  mv ~/.cdstat{.tmp,}
+}
+
+cd() {
+  builtin cd $* && { [ "${1:0:1}" == "-" ] || update_cdstat $1 ; }
+}
+
 cdpath=`realpath ~/.cdd_path`
 [ -f "$cdpath" ] || touch $cdpath
 unalias cdd 2> /dev/null
 cdd() {
   [ -n "$1" ] || return
-  local dest_dir=$(sed 's/\s*#.*//' < $cdpath | grep -v '^$' | fzf +m +s -1 -q $1 )
+  local get_cdstat=""
+  local dest_dir=$(sed 's/\s*#.*//' < $cdpath | grep -v '^$' | cat - <(cut -d' ' -f3- ~/.cdstat) | fzf +m -1 -q $1 )
   [ -n "$dest_dir" ] && cd "$dest_dir"
 }
 export -f cdd > /dev/null
