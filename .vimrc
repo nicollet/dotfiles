@@ -410,8 +410,23 @@ endif
 
 " do backups, and recovery files
 set backup
-set backupdir=~/.vim/backup,~/tmp " backup files
-set directory=~/.vim/tmp,~/tmp " temp files
+" set backupdir=~/.vim/backup,~/tmp " backup files
+" set directory=~/.vim/tmp,~/tmp " temp files
+
+set backupdir=~/.vim/backup " backup files
+set directory=~/.vim/tmp " temp files
+
+function! EnsureDir(dir)
+	if !isdirectory(a:dir)
+		" mode 773 does not work for some reason... strange
+		call mkdir(a:dir, "", 0773)
+	endif
+endfunction
+
+for dir in split(&backupdir, ',') + split(&directory, ',')
+	call EnsureDir(dir)
+endfor
+
 
 " skip backups for bosun -w, which watches files for writes
 set backupskip+=*/cmd/bosun/{*.go\\,web/static/{js/*.ts\\,templates/*.html}}
