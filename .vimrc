@@ -200,7 +200,9 @@ set wildignore+=.git,.hg,.svn
 
 " just a try: let's forget ;
 nnoremap ; :
-" maybe later:  nnoremap : ;
+nnoremap : ;
+vnoremap ; :
+vnoremap : ;
 
 set autowrite
 
@@ -422,6 +424,7 @@ set timeoutlen=500
 
 if v:version > 703 || v:version == 703 && has("patch541")
   set formatoptions+=j " Delete comment character when joining commented lines
+  set formatoptions-=lv
 endif
 set nrformats-=octal " we don't use octal that much for CTRL-A / CTRL-X
 
