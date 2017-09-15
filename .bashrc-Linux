@@ -4,6 +4,9 @@
 [ `id -u` == '0' ] && DOLLAR="${RED}#${NC} " || DOLLAR='$ '
 PS1="\u@${WRAP}${GREEN}\h${NC}:\w${NC}${DOLLAR}"
 
+# from http://jonisalonen.com/2012/your-bash-prompt-needs-this/
+PS1="\[\033[G\]$PS1"
+
 alias vi=vim
 export EDITOR=/usr/bin/vim
 

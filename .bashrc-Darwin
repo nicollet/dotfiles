@@ -3,6 +3,8 @@ export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
 export SCREENRC=.screenrc-Darwin
 export PS1="${USER/xnicollet/xa}@mac:\w"'${debian_chroot:+($debian_chroot)}'"\$ "
+# from http://jonisalonen.com/2012/your-bash-prompt-needs-this/
+# PS1="\[\033[G\]$PS1"
 
 alias ssh=my_ssh
 
@@ -76,15 +78,6 @@ _fzf_compgen_dir() {
   sed 's/\s*#.*//' < $cdpath | grep -v '^$' | cat - <(cut -d' ' -f3- ~/.cdstat) | sort -u
 }
 
-cdd() {
-  local query=""
-  [ -n "$1" ] && query="-q $1"
-  local get_cdstat=""
-  local fzf_options="+m -1 --tiebreak=end,index"
-  local dest_dir=`_fzf_compgen_dir | fzf $fzf_options $query`
-  [ -n "$dest_dir" ] && builtin cd "$dest_dir" && $update_cdstat_command $dest_dir
-}
-
 cdp() {
   [ -n "$1" ] && dir=`realpath "$1"` || dir=`pwd`
   grep -q -F -x "$dir" $cdpath || echo -e "$dir" >> $cdpath
@@ -105,22 +98,37 @@ cdls() {
   cat $cdpath
 }
 
-# try a complete cdd
-_cdd() {
-  COMPREPLY=()
-  #local cur="${COMP_WORDS[COMP_CWORD]}"
-  #local prev="${COMP_WORDS[COMP_CWORD-1]}"
-  [ "$1" == "cdd" ] || return 0
-  local fzf="fzf --tiebreak=end,index -f $2"
-  [ "$2" == "" ] && fzf="cat"
-  readarray -t COMPREPLY < <(_fzf_compgen_dir | $fzf | sort -u)
-  #echo comreply0: ${COMREPLY[*]}
-  return 0
+function _cd_comp() {
+  builtin bind '"\er": redraw-current-line'
+  builtin bind '"\e^": magic-space'
+
+  #echo "|${READLINE_LINE:$READLINE_POINT:1}|"
+
+  local words=()
+  read -a words < <(echo $READLINE_LINE)
+  [ -z $words ] && return
+  local last=${words[-1]}
+  local search=""
+  [ "$last" == "" ] || search="-q $last"
+  # local bind_='tab:accept,enter:execute(echo\\ ,,exe{})'
+  local bind_='tab:accept'
+  local fzf="fzf --tiebreak=end,index $search --reverse --height 30% "
+  local found=$(_fzf_compgen_dir | $fzf --bind $bind_)
+
+  # if we are completing an empty word
+  local b=$(( READLINE_POINT - 1))
+  [[ ${READLINE_LINE:$b:1} == " " ]] && words+=('replace_me')
+
+  words[-1]=$found
+
+  READLINE_LINE=${words[*]}
+  READLINE_POINT=${#READLINE_LINE}
 }
-complete -F _cdd -o dirnames cdd
-# todo: cd
-# todo: normal completion suffix? ,,
-# todo: see double tab
+
+
+# test some bindings
+bind -x '"\C-x2": _cd_comp'
+bind '"\C-if": "\C-x2\e^\er"'
 
 
 # [ -f ~/.fzf.bash ] && source ~/.fzf.bash
