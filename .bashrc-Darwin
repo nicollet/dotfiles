@@ -8,8 +8,6 @@ export PS1="${USER/xnicollet/xa}@mac:\w"'${debian_chroot:+($debian_chroot)}'"\$ 
 
 alias ssh=my_ssh
 
-# [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
-
 append PATH "/usr/local/go/bin"
 export PATH
 
@@ -99,9 +97,6 @@ cdls() {
 }
 
 function _cd_comp() {
-  builtin bind '"\er": redraw-current-line'
-  builtin bind '"\e^": magic-space'
-
   #echo "|${READLINE_LINE:$READLINE_POINT:1}|"
 
   local words=()
@@ -125,10 +120,12 @@ function _cd_comp() {
   READLINE_POINT=${#READLINE_LINE}
 }
 
+builtin bind '"\er": redraw-current-line'
+builtin bind '"\e^": magic-space'
+
 
 # test some bindings
 bind -x '"\C-x2": _cd_comp'
-bind '"\C-if": "\C-x2\e^\er"'
+bind '"\C-xj": "\C-x2\e^\er"'
 
 
-# [ -f ~/.fzf.bash ] && source ~/.fzf.bash
