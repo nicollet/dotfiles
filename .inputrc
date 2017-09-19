@@ -1,0 +1,13 @@
+set colored-completion-prefix On
+set bell-style visible
+set colored-stats On
+set keyseq-timeout 400
+set visible-stats On
+
+# Display matches for ambiguous patterns at first tab press
+set show-all-if-ambiguous On
+
+# to be tested
+set show-all-if-unmodified On
+
+set visible-stats On

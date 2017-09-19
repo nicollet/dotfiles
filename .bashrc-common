@@ -19,9 +19,6 @@ export GOPATH=$HOME
 
 shopt -s extglob
 
-# Display matches for ambiguous patterns at first tab press
-bind "set show-all-if-ambiguous on"
-
 # Append to history: don't overwrite
 shopt -s histappend
 
