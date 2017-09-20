@@ -80,4 +80,6 @@ go/
 
 .cdd_path
 bin/strength
-
+bin/fzf
+.cdstat
+.bundle/
