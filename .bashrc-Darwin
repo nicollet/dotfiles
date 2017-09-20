@@ -128,4 +128,6 @@ builtin bind '"\e^": magic-space'
 bind -x '"\C-x2": _cd_comp'
 bind '"\C-xj": "\C-x2\e^\er"'
 
+# complete only on diretories for cd
+complete -o dirnames cd
 
