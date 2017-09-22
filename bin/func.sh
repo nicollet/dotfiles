@@ -20,26 +20,33 @@ prepend() {
 }
 
 my_ssh() {
-	realargs="$@"
-	host="${@:-1}"
-	while [ $# -gt 0 ]; do
-		if [ "${1:0:1}" == "-" ] ; then # arguments
-			# echo arg $1
-			[[ "$1" == -[bcDEeFIiLlmOopQRSWw] ]] && { 
-				shift # ... with params
-				# echo with param
-			}
-			shift
-		else
-			host=$1
-			# echo host: $host
-			break
-		fi
-	done
-	set -- $realargs
-	echo -n -e "\033k${host}\033\\"
-	/usr/bin/ssh $realargs
-	echo -n -e "\033kbash\033\\"
+  realargs="$@"
+  host="${@:-1}"
+  while [ $# -gt 0 ]; do
+    if [ "${1:0:1}" == "-" ] ; then # arguments
+      # echo arg $1
+      [[ "$1" == -[bcDEeFIiLlmOopQRSWw] ]] && { 
+        shift # ... with params
+        # echo with param
+      }
+      shift
+    else
+      host=$1
+      # echo host: $host
+      break
+    fi
+  done
+  set -- $realargs
+  (
+    _screen_title() {
+      screen -X eval "title b"
+    }
+    trap _screen_title exit
+    # echo -n -e "\033k${host}\033\\"
+    screen -X eval "title ${host}"
+    screen -X eval "hstatus ^%{.y}${host}^%{-}"
+    /usr/bin/ssh $realargs
+  )
 }
 
 
