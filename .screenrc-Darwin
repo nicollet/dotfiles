@@ -30,10 +30,5 @@ escape ^Jj
 shell "/usr/local/bin/bash"
 shelltitle "b"
 
-# partage de session avec root
-# pour sudo bash
-multiuser on
-acladd root
-
 # reload screenrc
 bind ^r source ~/.screenrc-Darwin
