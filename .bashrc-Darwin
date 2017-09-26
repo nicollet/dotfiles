@@ -138,29 +138,46 @@ function _cd_comp() {
   local last=${words[-1]}
   local search=""
   [ "$last" == "" ] || search="-q $last"
-  # local bind_='tab:accept,enter:execute(echo\\ ,,exe{})'
-  local bind_='tab:accept'
-  local fzf="fzf --tiebreak=end,index $search --reverse --height 30% "
-  local found
-  found=$(_fzf_compgen_dir | $fzf --bind $bind_)
+  opt="--bind tab:accept --expect tab,return"
+  fzf="fzf --tiebreak=end,index $search --reverse --height 30% "
+  #local found=$(_fzf_compgen_dir | $fzf $opt)
+
+  keyf=$(mktemp)
+  pathf=$(mktemp)
+  echo keyf: $keyf
+  trap "rm $keyf $pathf" EXIT
+  _fzf_compgen_dir | $fzf $opt | {
+    IFS= read -r key && IFS= read -r path
+    echo $key >$keyf
+    echo $path >$pathf
+  }
+
+  IFS= read -r key <$keyf
+  IFS= read -r path <$pathf
 
   # if we are completing an empty word
   local b=$(( READLINE_POINT - 1))
   [[ ${READLINE_LINE:$b:1} == " " ]] && words+=('replace_me')
 
-  words[-1]=$found
+  words[-1]=$path
 
   READLINE_LINE=${words[*]}
   READLINE_POINT=${#READLINE_LINE}
+
+  [ "$key" == "return" ] && {
+    builtin bind -r "\er"
+    builtin bind '"\e^": accept-line'
+    return
+  }
+
+  builtin bind '"\er": redraw-current-line'
+  builtin bind '"\e^": magic-space'
 }
 
-builtin bind '"\er": redraw-current-line'
-builtin bind '"\e^": magic-space'
 
 
 # test some bindings
 bind -x '"\C-x2": _cd_comp'
-bind '"\C-xj": "\C-x2\e^\er"'
 
 # fixme c-o
 stty discard undef
