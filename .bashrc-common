@@ -30,6 +30,11 @@ shopt -s cmdhist
 # export LANG='en_US.UTF-8'
 
 alias sd='screen -DR'
+alias ssh=my_ssh
+alias cd..='cd ../'
+alias ..='cd ../'
+alias ...='cd ../../'
+
 
 # bigger history
 HISTSIZE=5000
@@ -53,3 +58,11 @@ bind '"\C-x;": edit-and-execute-command'
 
 # needed for vim backups
 mkdir -p ~/.vim/tmp
+
+# automatically trim long paths in the prompt (bash 4.x)
+PROMPT_DIRTRIM=3
+
+# complete only on diretories for those commands
+complete -d cd
+complete -d rmdir
+
