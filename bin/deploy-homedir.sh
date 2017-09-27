@@ -1,7 +1,8 @@
 #! /bin/bash
 
 SSH_OPT='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
-SRC="$HOME/stack/git/Github/nicollet/dotfiles/.git"
+#SRC="$HOME/stack/git/Github/nicollet/dotfiles/.git"
+SRC="$HOME/.git"
 
 [ "x$1" == "x--help" ] && {
   echo "usage: `basename $0` [--help] FILTER_HOSTS"

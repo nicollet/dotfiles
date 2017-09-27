@@ -96,9 +96,14 @@ update_cdstat() {
 update_cdstat_command=$(which update_cdstats || echo update_cdstat)
 
 cd() {
-  [[ "${1}" == -* || "$1" == "" ]] && { builtin cd "$@" ; return $? ; }
-  realpath=$(realpath "$1") # check realpath before we cd into new dir
-  builtin cd "$@" && "$update_cdstat_command" "$realpath"
+  builtin cd "$@" && {
+    [[ "${1}" == -* || "$1" == "" ]] || {
+      realpath=$(realpath "$1") # check realpath before we cd into new dir
+      "$update_cdstat_command" "$realpath"
+    }
+    # tbc
+    #tput sc ; tput el1; tput cuu1 ; tput el1; tput cud1 ; tput cud1 ; ls ; tput rc
+  }
 }
 
 cdpath=$(realpath ~/.cdd_path)
