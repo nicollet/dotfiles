@@ -29,8 +29,9 @@ PS1="${USER/xnicollet/}@:\w$(_idcolor)${RESET} "
 export PS1
 # PS1_=$PS1
 
-PS0="\[$(tput -S <<!
+clear_lines="$(tput -S <<!
 sc
+cud1
 el
 el1
 cud1
@@ -44,7 +45,25 @@ el
 el1
 rc
 !
-)\]"
+)"
+
+PS0="\[${clear_lines}\]"
+
+getpos() {
+  exec < /dev/tty
+  oldstty=$(stty -g)
+  stty raw -echo min 0
+  echo -en "\033[6n" > /dev/tty
+  IFS=';' read -r -d R -a pos
+  stty $oldstty
+  row=$((${pos[0]:2} - 1))
+  col=$((${pos[1]} - 1))
+}
+
+is_end() {
+  getpos
+  [[ "$row" -ge $((${LINES} - 4)) ]]
+}
 
 set_ps1() {
   [ "$TERM" = "screen" ] || return
@@ -57,7 +76,8 @@ set_ps1() {
   #PS1="\[\e]0;\]${PWD_}\[\a\]$PS1_"
   #PS1="${PWD_}\[\a\]$PS1_"
 
-  # clear screen if last command was cd
+  # clear screen only if we are not down
+  is_end && PS0='' || PS0="\[${clear_lines}\]"
 }
 
 PROMPT_COMMAND=set_ps1
@@ -127,6 +147,8 @@ cd() {
     }
     # tbc
     # tput sc ; tput el; tput cuu1 ; tput el; tput cud1 ; tput cud1 ; ls ; tput rc
+
+    # print below cursor
     tput sc ; tput el; tput cud1 ; tput el
 
     local tmp
@@ -212,10 +234,18 @@ function _cd_comp() {
   builtin bind '"\e^": magic-space'
 }
 
-
+clear_line() {
+  tput el
+  tput el1
+}
 
 # test some bindings
 bind -x '"\C-x2": _cd_comp'
+bind -x '"\C-x3": clear_line'
+bind '"\C-x4": accept-line'
+
+# bind -r '"\C-m"'
+bind '"\C-m": "\C-x4\C-x3"'
 
 # fixme c-o
 stty discard undef
