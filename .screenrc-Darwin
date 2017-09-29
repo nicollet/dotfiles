@@ -1,4 +1,4 @@
-hardstatus alwayslastline "%{= .b}|%h|%{= .g} %-Lw%{= bw}%50>%n%f %t%{-}%+Lw %87L< %= %{.w} %c %d-%m"
+hardstatus alwayslastline "%{= .g} %-Lw%{= bw}%50>%n%f %t%{-}%+Lw %{= .b}|%h|%{= .g} %87L< %= %{.w} %c %d-%m"
 
 # hardstatus string '%{= kG}[%{G}%H%? %1`%?%{g}][%= %{= kw}%-w%{+b yk} %n*%t%?(%u)%? %{-}%+w %=%{g}][%{B}%m/%d %{W}%C%A%{g}]'
 
