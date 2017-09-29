@@ -29,7 +29,22 @@ PS1="${USER/xnicollet/}@:\w$(_idcolor)${RESET} "
 export PS1
 # PS1_=$PS1
 
-# PS0="a\[$(tput el) $(tput ed)\]b"
+PS0="\[$(tput -S <<!
+sc
+el
+el1
+cud1
+el
+el1
+cud1
+el
+el1
+cud1
+el
+el1
+rc
+!
+)\]"
 
 set_ps1() {
   [ "$TERM" = "screen" ] || return
