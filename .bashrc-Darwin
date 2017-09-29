@@ -29,6 +29,8 @@ PS1="${USER/xnicollet/}@:\w$(_idcolor)${RESET} "
 export PS1
 # PS1_=$PS1
 
+# PS0="a\[$(tput el) $(tput ed)\]b"
+
 set_ps1() {
   [ "$TERM" = "screen" ] || return
   PWD_=${PWD/\/Users\/xnicollet/\~}
@@ -39,6 +41,8 @@ set_ps1() {
   screen -X eval "hstatus '$PWD_'"
   #PS1="\[\e]0;\]${PWD_}\[\a\]$PS1_"
   #PS1="${PWD_}\[\a\]$PS1_"
+
+  # clear screen if last command was cd
 }
 
 PROMPT_COMMAND=set_ps1
@@ -95,6 +99,11 @@ update_cdstat() {
 # go get github.com/nicollet/update_cdstats
 update_cdstat_command=$(which update_cdstats || echo update_cdstat)
 
+
+gnuls() {
+  /usr/local/Cellar/coreutils/8.27/libexec/gnubin/ls "$@"
+}
+
 cd() {
   builtin cd "$@" && {
     [[ "${1}" == -* || "$1" == "" ]] || {
@@ -102,7 +111,17 @@ cd() {
       "$update_cdstat_command" "$realpath"
     }
     # tbc
-    #tput sc ; tput el1; tput cuu1 ; tput el1; tput cud1 ; tput cud1 ; ls ; tput rc
+    # tput sc ; tput el; tput cuu1 ; tput el; tput cud1 ; tput cud1 ; ls ; tput rc
+    tput sc ; tput el; tput cud1 ; tput el
+
+    local tmp
+    tmp=$(mktemp)
+    trap "rm ${tmp}" RETURN
+    width="--width=$(tput cols)"
+    gnuls -U --color -F $width -C | tee $tmp | head -3
+    [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
+
+    tput rc
   }
 }
 
@@ -149,8 +168,7 @@ function _cd_comp() {
 
   keyf=$(mktemp)
   pathf=$(mktemp)
-  echo keyf: $keyf
-  trap "rm $keyf $pathf" EXIT
+  trap "rm $keyf $pathf" RETURN
   _fzf_compgen_dir | $fzf $opt | {
     IFS= read -r key && IFS= read -r path
     echo $key >$keyf
