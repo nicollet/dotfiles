@@ -5,15 +5,6 @@ export CLICOLOR=1
 export LSCOLORS=ExFxCxDxBxegedabagacad
 export SCREENRC=.screenrc-Darwin
 
-
-# PS_SYMBOL_DARWIN=''
-# PS_SYMBOL_LINUX='$'
-# PS_SYMBOL_OTHER='%'
-# GIT_BRANCH_SYMBOL='⑂ '
-# GIT_BRANCH_CHANGED_SYMBOL='+'
-# GIT_NEED_PUSH_SYMBOL='⇡'
-# GIT_NEED_PULL_SYMBOL='⇣'
-
 FG_RED="\[$(tput setaf 1)\]"
 RESET="\[$(tput sgr0)\]"
 
@@ -27,66 +18,14 @@ _idcolor() {
 
 PS1="${USER/xnicollet/}@:\w$(_idcolor) "
 export PS1
-# PS1_=$PS1
-
-clear_lines="$(tput -S <<!
-sc
-cud1
-el
-el1
-cud1
-el
-el1
-cud1
-el
-el1
-cud1
-el
-el1
-rc
-sgr0
-!
-)"
-
-# PS0="\[${clear_lines}\]"
-
-getpos() {
-  exec < /dev/tty
-  oldstty=$(stty -g)
-  stty raw -echo min 0
-  echo -en "\033[6n" > /dev/tty
-  IFS=';' read -r -d R -a pos
-  stty $oldstty
-  row=$((${pos[0]:2} - 1))
-  col=$((${pos[1]} - 1))
-}
-
-is_end() {
-  getpos
-  # screen -X eval "hstatus '$row/$LINES'"
-  [[ "$row" -ge $((${LINES} - 6)) ]]
-}
 
 set_ps1() {
   [ "$TERM" = "screen" ] || return
   PWD_=${PWD/\/Users\/xnicollet/\~}
-  #_idroot && PS1="\[\e]0;${PWD_}\a\]$PS1_" || { 
-    # PWD_=${PWD_/\~/^%{.g\}\~^%{-\}} # make ~ green
   screen -X eval "hstatus '$PWD_'"
-  #}
-        # screen -X eval "hstatus '$PWD_'"
-  #PS1="\[\e]0;\]${PWD_}\[\a\]$PS1_"
-  #PS1="${PWD_}\[\a\]$PS1_"
-
-  # clear screen only if we are not down
-  # PS0=''
-  # is_end && PS0='' || PS0="\[${clear_lines}\]"
 }
 
 PROMPT_COMMAND=set_ps1
-
-# from http://jonisalonen.com/2012/your-bash-prompt-needs-this/
-# PS1="\[\033[G\]$PS1"
 
 append PATH "/usr/local/go/bin"
 export PATH
@@ -149,19 +88,12 @@ cd() {
       "$update_cdstat_command" "$realpath"
     }
     # print below cursor
-    #is_end || {
-    {
-      local tmp
-      tmp=$(mktemp)
-      trap "rm ${tmp}" RETURN
-      width="--width=$(tput cols)"
-      gnuls -U --color -F $width -C | tee $tmp | head -1
-      [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
-
-      # tput rc
-      # tput sgr0
-      # PS0="\[${clear_lines}\]"
-    }
+    local tmp
+    tmp=$(mktemp)
+    trap "rm ${tmp}" RETURN
+    width="--width=$(tput cols)"
+    gnuls -U --color -F $width -C | tee $tmp | head -1
+    [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
   }
 }
 
@@ -257,3 +189,4 @@ bind '"\C-of": "\C-x2\e^\er"'
 bind '"\C-oo": operate-and-get-next'
 
 bind -m vi-insert '"jk": vi-movement-mode'
+
