@@ -1,4 +1,8 @@
-hardstatus alwayslastline "%{= .g} %-Lw%{= bw}%50>%n%f %t%{-}%+Lw %{= .b}|%h|%{= .g} %87L< %= %{.w} %c %d-%m"
+hardstatus string "%{= .g} %-Lw%{= bw}%50>%n%f %t%{-}%+Lw %{= .b}|%h| %{-} %87L< %= %{.w} %c %d-%m"
+hardstatus lastline
+
+# caption always "%{= kw}%-w%{= BW}%n %t%{-}%+w |%h| %-= %c"
+
 
 # hardstatus string '%{= kG}[%{G}%H%? %1`%?%{g}][%= %{= kw}%-w%{+b yk} %n*%t%?(%u)%? %{-}%+w %=%{g}][%{B}%m/%d %{W}%C%A%{g}]'
 
@@ -32,3 +36,13 @@ shelltitle "b"
 
 # reload screenrc
 bind ^r source ~/.screenrc-Darwin
+
+term xterm-256color
+defutf8 on
+nonblock on
+
+bind o hardstatus ignore
+bind O hardstatus lastline
+bind :
+bind ; colon
+

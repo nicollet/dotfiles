@@ -37,16 +37,14 @@ my_ssh() {
     fi
   done
   set -- $realargs
-  (
-    _screen_title() {
-      screen -X eval "title b"
-    }
-    trap _screen_title exit
-    # echo -n -e "\033k${host}\033\\"
-    screen -X eval "title ${host}"
-    screen -X eval "hstatus ^%{.y}${host}^%{-}"
-    /usr/bin/ssh $realargs
-  )
+  _screen_title() {
+    screen -X eval "title b"
+  }
+  trap _screen_title return
+  # echo -n -e "\033k${host}\033\\"
+  screen -X eval "title ${host}"
+  screen -X eval "hstatus ^%{.y}${host}^%{-}"
+  /usr/bin/ssh $realargs
 }
 
 

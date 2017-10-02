@@ -22,10 +22,10 @@ _idroot() {
 }
 
 _idcolor() {
-   _idroot && echo "${FG_RED}\\\$" || echo '$'
+   _idroot && echo "${FG_RED}\\\$${RESET}" || echo '$'
 }
 
-PS1="${USER/xnicollet/}@:\w$(_idcolor)${RESET} "
+PS1="${USER/xnicollet/}@:\w$(_idcolor) "
 export PS1
 # PS1_=$PS1
 
@@ -44,10 +44,11 @@ cud1
 el
 el1
 rc
+sgr0
 !
 )"
 
-PS0="\[${clear_lines}\]"
+# PS0="\[${clear_lines}\]"
 
 getpos() {
   exec < /dev/tty
@@ -62,7 +63,8 @@ getpos() {
 
 is_end() {
   getpos
-  [[ "$row" -ge $((${LINES} - 4)) ]]
+  # screen -X eval "hstatus '$row/$LINES'"
+  [[ "$row" -ge $((${LINES} - 6)) ]]
 }
 
 set_ps1() {
@@ -70,14 +72,15 @@ set_ps1() {
   PWD_=${PWD/\/Users\/xnicollet/\~}
   #_idroot && PS1="\[\e]0;${PWD_}\a\]$PS1_" || { 
     # PWD_=${PWD_/\~/^%{.g\}\~^%{-\}} # make ~ green
-  #  screen -X eval "hstatus '$PWD_'"
-  #}
   screen -X eval "hstatus '$PWD_'"
+  #}
+        # screen -X eval "hstatus '$PWD_'"
   #PS1="\[\e]0;\]${PWD_}\[\a\]$PS1_"
   #PS1="${PWD_}\[\a\]$PS1_"
 
   # clear screen only if we are not down
-  is_end && PS0='' || PS0="\[${clear_lines}\]"
+  # PS0=''
+  # is_end && PS0='' || PS0="\[${clear_lines}\]"
 }
 
 PROMPT_COMMAND=set_ps1
@@ -145,20 +148,20 @@ cd() {
       realpath=$(realpath "$1") # check realpath before we cd into new dir
       "$update_cdstat_command" "$realpath"
     }
-    # tbc
-    # tput sc ; tput el; tput cuu1 ; tput el; tput cud1 ; tput cud1 ; ls ; tput rc
-
     # print below cursor
-    tput sc ; tput el; tput cud1 ; tput el
+    #is_end || {
+    {
+      local tmp
+      tmp=$(mktemp)
+      trap "rm ${tmp}" RETURN
+      width="--width=$(tput cols)"
+      gnuls -U --color -F $width -C | tee $tmp | head -1
+      [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
 
-    local tmp
-    tmp=$(mktemp)
-    trap "rm ${tmp}" RETURN
-    width="--width=$(tput cols)"
-    gnuls -U --color -F $width -C | tee $tmp | head -3
-    [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
-
-    tput rc
+      # tput rc
+      # tput sgr0
+      # PS0="\[${clear_lines}\]"
+    }
   }
 }
 

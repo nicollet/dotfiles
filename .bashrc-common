@@ -34,7 +34,7 @@ alias ssh=my_ssh
 alias cd..='cd ../'
 alias ..='cd ../'
 alias ...='cd ../../'
-
+alias r='reset'
 
 # bigger history
 HISTSIZE=5000
@@ -44,7 +44,7 @@ HISTFILESIZE=50000
 HISTCONTROL="erasedups:ignoreboth"
 
 # don't record some commands
-HISTIGNORE="exit:ls:bg:fg:history:clear"
+HISTIGNORE="exit:ls:bg:fg:history:clear:r"
 
 # Useful timestamp format
 HISTTIMEFORMAT='%F %T '
