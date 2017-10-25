@@ -20,7 +20,7 @@ PS1="${USER/xnicollet/}@:\w$(_idcolor) "
 export PS1
 
 set_ps1() {
-  [ "$TERM" = "screen" ] || return
+  [ -z "$STY" ] && return
   PWD_=${PWD/\/Users\/xnicollet/\~}
   screen -X eval "hstatus '$PWD_'"
 }
@@ -51,8 +51,6 @@ shopt -s cdspell 2> /dev/null
 
 alias mount="mount | column -t"
 
-# Load RVM into a shell session *as a function*
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 update_cdstat() {
   local max_stat=100
@@ -82,15 +80,16 @@ gnuls() {
 }
 
 cd() {
+  local realpath
+  [[ "${1}" == -* || "$1" == "" ]] || {
+    realpath=$(realpath "$1") # check realpath before we cd into new dir
+  }
   builtin cd "$@" && {
-    [[ "${1}" == -* || "$1" == "" ]] || {
-      realpath=$(realpath "$1") # check realpath before we cd into new dir
-      "$update_cdstat_command" "$realpath"
-    }
+    [[ -n "$realpath" ]] && "$update_cdstat_command" "$realpath"
     # print below cursor
     local tmp
     tmp=$(mktemp)
-    trap "rm ${tmp}" RETURN
+    trap "rm -f ${tmp}" RETURN
     width="--width=$(tput cols)"
     gnuls -U --color -F $width -C | tee $tmp | head -1
     [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
@@ -169,18 +168,8 @@ function _cd_comp() {
   builtin bind '"\e^": magic-space'
 }
 
-clear_line() {
-  tput el
-  tput el1
-}
-
 # test some bindings
 bind -x '"\C-x2": _cd_comp'
-bind -x '"\C-x3": clear_line'
-bind '"\C-x4": accept-line'
-
-# bind -r '"\C-m"'
-bind '"\C-m": "\C-x4\C-x3"'
 
 # fixme c-o
 stty discard undef
@@ -190,3 +179,5 @@ bind '"\C-oo": operate-and-get-next'
 
 bind -m vi-insert '"jk": vi-movement-mode'
 
+# Load RVM into a shell session *as a function*
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
