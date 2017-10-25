@@ -83,3 +83,17 @@ bin/strength
 bin/fzf
 .cdstat
 .bundle/
+
+.parallel/
+.yarnrc
+bin/anim_diff
+bin/cwebp
+bin/dwebp
+bin/fillstruct
+bin/fpuppet.sh
+bin/gif2webp
+bin/img2webp
+bin/keyify
+bin/vwebp
+bin/webpmux
+google-cloud-sdk/
