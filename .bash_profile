@@ -12,3 +12,6 @@ if [ -f '/Users/xnicollet/google-cloud-sdk/path.bash.inc' ]; then source '/Users
 if [ -f '/Users/xnicollet/google-cloud-sdk/completion.bash.inc' ]; then source '/Users/xnicollet/google-cloud-sdk/completion.bash.inc'; fi
 
 #[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm" # Load RVM into a shell session *as a function*
+
+# used to install vim with brew
+# export PATH="/usr/local/opt/python/libexec/bin:$PATH"

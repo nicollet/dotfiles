@@ -40,9 +40,9 @@ set t_Co=256
 "	autocmd BufWrite *.go call GoHtml()
 
 " http://stackoverflow.com/questions/18576651/check-whether-pathogen-is-installed-in-vimrc
-runtime! autoload/pathogen.vim
+runtime! bundle/vim-pathogen/autoload/pathogen.vim
 if exists("*pathogen#infect")
-	call pathogen#infect()
+	call pathogen#infect('bundle/{}', '/usr/local/opt/fzf')
 endif
 
 inoremap jk <Esc>l
@@ -450,5 +450,12 @@ if v:version > 703 || v:version == 703 && has("patch541")
 	set formatoptions-=lv
 endif
 set nrformats-=octal " we don't use octal that much for CTRL-A / CTRL-X
+
+" Yank buffer as in emacs
+if &runtimepath =~ 'vim-yankstack'
+	let g:yankstack_map_keys = 0
+	nmap <leader>p <Plug>yankstack_substitute_older_paste
+	nmap <leader>P <Plug>yankstack_substitute_newer_paste
+endif
 
 " vim: set list ts=2 sw=2:
