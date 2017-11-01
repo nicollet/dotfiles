@@ -106,6 +106,10 @@ augroup puppet
 	au FileType puppet setl list ts=2 sw=2 et
 augroup end
 
+augroup ruby
+	au FileType ruby setl list ts=2 sw=2 et
+augroup end
+
 augroup json
 	au FileType json setl list ts=2 sw=2 et
 augroup end
@@ -136,7 +140,8 @@ set visualbell
 
 cnoremap w!! w !sudo tee %
 " make C-g behave like C-c in command mode
-cnoremap <C-g> <C-c>
+" cnoremap <C-g> <C-c>
+" does not fit well with inscearch
 
 " todo remap set number to set number relativenumber
 " when printing number, use relative numbers so that we can 3dd easily
@@ -169,31 +174,31 @@ set laststatus=2
 set noruler
 
 " http://got-ravings.blogspot.com/2008/08/vim-pr0n-making-statuslines-that-own.html
-set statusline=	 " clear the statusline for when vimrc is reloaded
+" set statusline=	 " clear the statusline for when vimrc is reloaded
 
 " syntastic
-if exists('SyntasticStatuslineFlag')
-	set statusline+=%#warningmsg#
-	set statusline+=%{SyntasticStatuslineFlag()}
-	set statusline+=%*
-endif
-let g:syntastic_always_populate_loc_list = 0
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
+" if exists('SyntasticStatuslineFlag')
+" 	set statusline+=%#warningmsg#
+" 	set statusline+=%{SyntasticStatuslineFlag()}
+" 	set statusline+=%*
+" endif
+" let g:syntastic_always_populate_loc_list = 0
+" let g:syntastic_auto_loc_list = 1
+" let g:syntastic_check_on_open = 0
+" let g:syntastic_check_on_wq = 0
 
-set statusline+=%-3.3n\											" buffer number
-set statusline+=%f\													" file name
-set statusline+=%h%m%r%w										 " flags
-set statusline+=[%{strlen(&ft)?&ft:'none'},	" filetype
-set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
-set statusline+=%{&fileformat}]							" file format
-set statusline+=%=													 " right align
-" set statusline+=%{synIDattr(synID(line('.'),col('.'),1),'name')}\	" highlight
-" set statusline+=%b,0x%-8B\									 " current char
-" set statusline+=%-14.(%l,%c%V%)\ %<%P				" offset
-set statusline+=%10((%l,%c)%)\						" line and column
-set statusline+=%p%%												" percentage of file
+" set statusline+=%-3.3n\											" buffer number
+" set statusline+=%f\													" file name
+" set statusline+=%h%m%r%w										 " flags
+" set statusline+=[%{strlen(&ft)?&ft:'none'},	" filetype
+" set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
+" set statusline+=%{&fileformat}]							" file format
+" set statusline+=%=													 " right align
+" " set statusline+=%{synIDattr(synID(line('.'),col('.'),1),'name')}\	" highlight
+" " set statusline+=%b,0x%-8B\									 " current char
+" " set statusline+=%-14.(%l,%c%V%)\ %<%P				" offset
+" set statusline+=%10((%l,%c)%)\						" line and column
+" set statusline+=%p%%												" percentage of file
 
 " help for file
 set wildmenu
@@ -209,6 +214,13 @@ nnoremap ; :
 nnoremap : ;
 vnoremap ; :
 vnoremap : ;
+
+if &runtimepath =~ 'fzf'
+	nnoremap <leader>;b :Buffers<CR>
+	nnoremap <leader>;e :Files<CR>
+	nnoremap <leader>;t :Tags<CR>
+	" see: https://statico.github.io/vim3.html
+end
 
 set autowrite
 
@@ -295,9 +307,6 @@ au BufWritePost *
 " temp
 " au BufWritePost *.html make
 
-command! DiffOrig vert new | set bt=nofile | r # | 0d_ | diffthis 
-	\ | wincmd p | diffthis
-
 " toggle quickfix with q
 function! Qf_toggle()
 	let godoc = bufnr('Godoc')
@@ -311,9 +320,9 @@ function! Qf_toggle()
 			cclose
 			return
 		elseif getbufvar(bnum, '&buftype') == 'help'
-			" helpc " not supported in vim7
-			execute "bd " . bnum
-			return
+				helpc " not supported in vim7
+				" execute "bd " . bnum
+				return
 		endif
 	endfor
 	copen
@@ -446,7 +455,7 @@ set timeoutlen=500
 if v:version > 703 || v:version == 703 && has("patch541")
 	set formatoptions+=j " Delete comment character when joining commented lines
 	set formatoptions+=c
-	set formatoptions-=r
+	set formatoptions-=ro
 	set formatoptions-=lv
 endif
 set nrformats-=octal " we don't use octal that much for CTRL-A / CTRL-X
@@ -457,5 +466,94 @@ if &runtimepath =~ 'vim-yankstack'
 	nmap <leader>p <Plug>yankstack_substitute_older_paste
 	nmap <leader>P <Plug>yankstack_substitute_newer_paste
 endif
+
+" Lightline
+" let g:lightline = {
+" \ 'colorscheme': 'wombat',
+" \ 'active': {
+" \   'left': [['mode', 'paste'], ['filename', 'modified']],
+" \   'right': [['lineinfo'], ['percent'], ['readonly', 'linter_warnings', 'linter_errors', 'linter_ok']]
+" \ },
+" \ 'component_expand': {
+" \   'linter_warnings': 'LightlineLinterWarnings',
+" \   'linter_errors': 'LightlineLinterErrors',
+" \   'linter_ok': 'LightlineLinterOK'
+" \ },
+" \ 'component_type': {
+" \   'readonly': 'error',
+" \   'linter_warnings': 'warning',
+" \   'linter_errors': 'error'
+" \ },
+" \ }
+"
+" function! LightlineLinterWarnings() abort
+"   let l:counts = ale#statusline#Count(bufnr(''))
+"   let l:all_errors = l:counts.error + l:counts.style_error
+"   let l:all_non_errors = l:counts.total - l:all_errors
+"   return l:counts.total == 0 ? '' : printf('%d ◆', all_non_errors)
+" endfunction
+"
+" function! LightlineLinterErrors() abort
+"   let l:counts = ale#statusline#Count(bufnr(''))
+"   let l:all_errors = l:counts.error + l:counts.style_error
+"   let l:all_non_errors = l:counts.total - l:all_errors
+"   return l:counts.total == 0 ? '' : printf('%d ✗', all_errors)
+" endfunction
+"
+" function! LightlineLinterOK() abort
+"   let l:counts = ale#statusline#Count(bufnr(''))
+"   let l:all_errors = l:counts.error + l:counts.style_error
+"   let l:all_non_errors = l:counts.total - l:all_errors
+"   return l:counts.total == 0 ? '✓ ' : ''
+" endfunction
+"
+" autocmd User ALELint call s:MaybeUpdateLightline()
+
+" Update and show lightline but only if it's visible (e.g., not in Goyo)
+" function! s:MaybeUpdateLightline()
+"   if exists('#lightline')
+"     call lightline#update()
+"   end
+" endfunction
+
+" lightline does it now
+set noshowmode
+
+let g:lightline = {
+	\ 'component_function': {
+	\   'readonly': 'LightlineReadonly',
+	\   'fileformat': 'LightlineFileformat',
+	\   'filetype': 'LightlineFiletype',
+	\   'filename': 'LightlineFilename',
+	\ },
+	\ }
+
+		let g:lightline.active = {
+		    \ 'left': [ [ 'mode', 'paste' ],
+		    \           [ 'readonly', 'filename' ] ],
+		    \ 'right': [ [ 'lineinfo' ],
+		    \            [ 'percent' ],
+		    \            [ 'fileformat', 'fileencoding', 'filetype' ] ] }
+
+function! LightlineReadonly()
+	return &readonly && &filetype !=# 'help' ? 'RO' : ''
+endfunction
+
+function! LightlineFileformat()
+	return &fileformat ==# 'unix' ? '' : &fileformat
+endfunction
+
+function! LightlineFiletype()
+	return &filetype
+endfunction
+
+function! LightlineFilename()
+	let filename = expand('%:t') != '' ? expand('%:t') : '[No Name]'
+	let modified = &modified ? '+' : ''
+	return filename . modified
+endfunction
+
+set incsearch
+set hls
 
 " vim: set list ts=2 sw=2:
