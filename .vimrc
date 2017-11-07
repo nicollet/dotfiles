@@ -17,9 +17,6 @@ au BufRead,BufNewFile Vagrantfile setfiletype ruby
 set modelines=5
 set modeline
 
-" pas de highlight abusif
-set nohls
-
 " set list | set nolist
 " set listchars=tab:\|-,trail:.
 set listchars=tab:»\ ,trail:.,nbsp:~
@@ -79,7 +76,8 @@ if &runtimepath =~ 'vim-go'
 
 		set list
 		let g:go_fmt_autosave = 1
-		let g:go_fmt_options = "-s -w"
+		" let g:go_fmt_options = "-s -w"
+		let g:go_fmt_command = "goimports"
 
 		" for golang: automatically run GoImports
 		" autocmd BufWritePre *.go call FormatAndImports()
@@ -274,6 +272,7 @@ nnoremap <silent> yO :call <SID>setup_paste()<CR>O
 " endif
 
 set splitright " split vertically to the right
+set splitbelow
 
 " let's give this a try
 set clipboard^=unnamed
@@ -556,4 +555,17 @@ endfunction
 set incsearch
 set hls
 
+if &runtimepath =~ 'ale'
+	" function! SwapAleLintOnTextChanged()
+	" 	if g:ale_lint_on_text_changed == 'always'
+	" 		let g:ale_lint_on_text_changed = 0
+	" 	else
+	" 		let g:ale_lint_on_text_changed = 'always'
+	" 	endif
+	" endfunction
+	nmap <Leader>at <Plug>(ale_toggle)
+	" nnoremap <Leader>at :call SwapAleLintOnTextChanged()<cr>
+	let g:ale_lint_on_insert_leave = 1
+	let g:ale_lint_on_text_changed = 'normal'
+endif
 " vim: set list ts=2 sw=2:
