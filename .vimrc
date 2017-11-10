@@ -97,23 +97,23 @@ if &runtimepath =~ 'vim-go'
 endif
 
 augroup yaml
-	autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+	autocmd FileType yaml sts=2 expandtab
 augroup end
 
 augroup puppet
-	au FileType puppet setl list ts=2 sw=2 et
+	au FileType puppet setl et
 augroup end
 
 augroup ruby
-	au FileType ruby setl list ts=2 sw=2 et
+	au FileType ruby setl et
 augroup end
 
 augroup json
-	au FileType json setl list ts=2 sw=2 et
+	au FileType json setl et
 augroup end
 
 augroup vim
-	au FileType vim setl list ts=2 sw=2 noet
+	au FileType vim setl noet
 augroup end
 
 " Google style guide for bash
@@ -129,6 +129,7 @@ augroup end
 
 " let's test hidden mode
 set hidden
+set list sw=2 ts=2
 
 nnoremap ' `
 nnoremap ` '
