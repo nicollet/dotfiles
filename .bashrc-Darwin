@@ -28,6 +28,7 @@ set_ps1() {
 PROMPT_COMMAND=set_ps1
 
 append PATH "/usr/local/go/bin"
+append PATH "${HOME}/projects/gcp/google-cloud-sdk/bin"
 export PATH
 
 alias vim='/usr/local/bin/vim'
