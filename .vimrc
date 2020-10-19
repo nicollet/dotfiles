@@ -41,7 +41,7 @@ if exists("*pathogen#infect")
 	call pathogen#infect('bundle/{}', '/usr/local/opt/fzf')
 endif
 
-inoremap jk <Esc>l
+inoremap jk <Esc>`^
 
 " remove arrows
 for prefix in ['i', 'n', 'v']
