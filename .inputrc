@@ -12,17 +12,7 @@ set show-all-if-unmodified On
 
 set visible-stats On
 
-#set show-mode-in-prompt on
-#set emacs-mode-string \1\e]0;\2
-#set vi-ins-mode-string \1\e]0;(ins) \2
-
-# Not ready for that:
-# Pressing tab will list all completions & select the first one. Pressing it
-# again will cycle through available completions.
-# TAB: menu-complete
-# Shift-TAB cycles completions backward
-# "\e[Z": menu-complete-backward
-
+set show-mode-in-prompt on
 # don't strip characters to 7 bits when reading
 set input-meta on
 

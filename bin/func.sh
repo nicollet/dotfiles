@@ -24,15 +24,12 @@ my_ssh() {
   host="${@:-1}"
   while [ $# -gt 0 ]; do
     if [ "${1:0:1}" == "-" ] ; then # arguments
-      # echo arg $1
       [[ "$1" == -[bcDEeFIiLlmOopQRSWw] ]] && { 
         shift # ... with params
-        # echo with param
       }
       shift
     else
       host=$1
-      # echo host: $host
       break
     fi
   done
@@ -46,5 +43,3 @@ my_ssh() {
   screen -X eval "hstatus ^%{.y}${host}^%{-}"
   /usr/bin/ssh $realargs
 }
-
-
