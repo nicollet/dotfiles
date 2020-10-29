@@ -13,40 +13,26 @@ let g:airline_powerline_fonts = 1
 filetype plugin indent on
 
 au BufRead,BufNewFile Vagrantfile setfiletype ruby
-set modelines=5
 set modeline
-
-" set list | set nolist
 " set listchars=tab:\|-,trail:.
-set listchars=tab:»\ ,trail:.,nbsp:~
+set listchars=tab:»\ ,trail:.,nbsp:~,extends:→,precedes:←
+set list shiftwidth=2 tabstop=2 noexpandtab
 
 " this is temporary: to get 256 colors
-set t_Co=256
+" set t_Co=256
 
-"	" should be called before go plugin is launched
-"		GoFmt
-"		if !empty(b:current_syntax)
-"			unlet b:current_syntax
-"		 endif
-"		 syn include @html syntax/html.vim
-"		syntax region htmlCode start=+<!DOCTYPE+ keepend end=+</html>+ contains=@html containedin=goRawString contained
-"	endfunction
-"
-"	" autocmd BufEnter *.go call GoHtml()
-"	autocmd BufWrite *.go call GoHtml()
-
-" http://stackoverflow.com/questions/18576651/check-whether-pathogen-is-installed-in-vimrc
 runtime! bundle/vim-pathogen/autoload/pathogen.vim
 if exists("*pathogen#infect")
 	call pathogen#infect('bundle/{}', '/usr/local/opt/fzf')
 endif
-
+" Added `^ to let the cursor where it is.
+" Not sure it's what I want.
 inoremap jk <Esc>`^
 
 " remove arrows
 for prefix in ['i', 'n', 'v']
 	for key in ['<Up>', '<Down>', '<Left>', '<Right>']
-		exe prefix . "noremap " . key . " <Nop>"
+		exe prefix . "noremap" key "<Nop>"
 	endfor
 endfor
 
@@ -73,7 +59,6 @@ if &runtimepath =~ 'vim-go'
 		nmap <Leader>gi <Plug>(go-info)
 		nmap <Leader>gI <plug>(go-imports)
 
-		set list
 		let g:go_fmt_autosave = 1
 		" let g:go_fmt_options = "-s -w"
 		let g:go_fmt_command = "goimports"
@@ -84,46 +69,44 @@ if &runtimepath =~ 'vim-go'
 		" some stuff from github.com/fatih/vim-go-tutorial
 		let g:go_list_type = "quickfix"
 		let g:go_highlight_build_constraints = 1
-
 	endfunction
-
 
 	augroup golang
 		autocmd!
 		au FileType go call SetGoOptions()
-		au FileType go setl list tabstop=2 shiftwidth=2 noexpandtab
+		au FileType go setl list tabstop=2 shiftwidth=2 sts=0 noexpandtab
 	augroup end
 endif
 
 augroup yaml
 	autocmd!
-	autocmd FileType yaml setl softtabstop=2 expandtab
+	autocmd FileType yaml setl sw=2 ts=2 sts=2 expandtab
 augroup end
 
 augroup puppet
 	autocmd!
-	au FileType puppet setl et
+	au FileType puppet setl expandtab
 augroup end
 
 augroup ruby
 	autocmd!
-	au FileType ruby setl et
+	au FileType ruby setl expandtab
 augroup end
 
 augroup json
 	autocmd!
-	au FileType json setl et
+	au FileType json setl expandtab
 augroup end
 
 augroup vim
 	autocmd!
-	au FileType vim setl noet
+	au FileType vim setl noexpandtab
 augroup end
 
 " Google style guide for bash
 augroup bash
 	autocmd!
-	au FileType sh setl list sw=2 ts=2 et
+	au FileType sh setl list sw=2 ts=2 sts=0 expandtab
 	function! RemapEnter() abort
 		nnoremap <return> :x<return>
 		inoremap <return> <esc>:x<return>
@@ -131,9 +114,7 @@ augroup bash
 	au BufNewFile,BufRead bash-fc* call RemapEnter()
 augroup end
 
-" let's test hidden mode
 set hidden
-set list shiftwidth=2 tabstop=2
 
 nnoremap ' `
 nnoremap ` '
@@ -141,14 +122,12 @@ nnoremap ` '
 set history=100
 set visualbell
 
-cnoremap w!! w !sudo tee %
-" make C-g behave like C-c in command mode
-" cnoremap <C-g> <C-c>
-" does not fit well with inscearch
+" cnoremap w!! w !sudo tee %
 
-" todo remap set number to set number relativenumber
-" when printing number, use relative numbers so that we can 3dd easily
-" set relativenumber
+function Number() abort
+	setl relativenumber! number!
+endfunction
+nnoremap <silent> <Leader>sn :call Number()<CR>
 
 " open vimrc more easily
 nnoremap <Leader>ev :e $MYVIMRC<cr>
