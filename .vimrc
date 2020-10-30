@@ -83,25 +83,12 @@ augroup yaml
 	autocmd FileType yaml setl sw=2 ts=2 sts=2 expandtab
 augroup end
 
-augroup puppet
-	autocmd!
-	au FileType puppet setl expandtab
-augroup end
-
-augroup ruby
-	autocmd!
-	au FileType ruby setl expandtab
-augroup end
-
-augroup json
-	autocmd!
-	au FileType json setl expandtab
-augroup end
-
-augroup vim
-	autocmd!
-	au FileType vim setl noexpandtab
-augroup end
+for file_type in ["puppet", "ruby", "json", "vim"]
+	exe "augroup" file_type
+		autocmd!
+		exe "au Filetype" file_type "setl expandtab"
+	exe "augroup end"
+endfor
 
 " Google style guide for bash
 augroup bash
@@ -124,15 +111,39 @@ set visualbell
 
 " cnoremap w!! w !sudo tee %
 
+" will probably never use this
 function Number() abort
-	setl relativenumber! number!
+	if &number || &relativenumber
+		setl nonumber norelativenumber
+	else
+		setl number relativenumber
+	endif
 endfunction
 nnoremap <silent> <Leader>sn :call Number()<CR>
 
 " open vimrc more easily
 nnoremap <Leader>ev :e $MYVIMRC<cr>
 " todo: improve this: should only save $MYVIMRC
-nnoremap <Leader>sv :w<cr> :source $MYVIMRC<cr>
+
+
+function! SaveVimrc() abort
+	let l:num_current = bufnr()
+  let l:vimrc = environ()["MYVIMRC"]
+	let l:loaded = bufloaded(l:vimrc)
+  if !l:loaded
+		exe "e $MYVIMRC"
+	endif
+	let l:num_vimrc = bufnr(l:vimrc)
+	exe "buffer" l:num_vimrc
+	exe "write"
+	exe "buffer" l:num_current
+	if !l:loaded
+		exe "bd" l:num_vimrc
+	endif
+endfunction
+
+" nnoremap <Leader>sv :w<cr> :source $MYVIMRC<cr>
+nnoremap <silent> <Leader>sv :call SaveVimrc()<cr>:source $MYVIMRC<cr>
 " should find a way to close it easily
 
 " sane backspace
@@ -155,47 +166,18 @@ set laststatus=2
 " know where the cursor is located
 set noruler
 
-" http://got-ravings.blogspot.com/2008/08/vim-pr0n-making-statuslines-that-own.html
-" set statusline=	 " clear the statusline for when vimrc is reloaded
-
-" syntastic
-" if exists('SyntasticStatuslineFlag')
-" 	set statusline+=%#warningmsg#
-" 	set statusline+=%{SyntasticStatuslineFlag()}
-" 	set statusline+=%*
-" endif
-" let g:syntastic_always_populate_loc_list = 0
-" let g:syntastic_auto_loc_list = 1
-" let g:syntastic_check_on_open = 0
-" let g:syntastic_check_on_wq = 0
-
-" set statusline+=%-3.3n\											" buffer number
-" set statusline+=%f\													" file name
-" set statusline+=%h%m%r%w										 " flags
-" set statusline+=[%{strlen(&ft)?&ft:'none'},	" filetype
-" set statusline+=%{strlen(&fenc)?&fenc:&enc}, " encoding
-" set statusline+=%{&fileformat}]							" file format
-" set statusline+=%=													 " right align
-" " set statusline+=%{synIDattr(synID(line('.'),col('.'),1),'name')}\	" highlight
-" " set statusline+=%b,0x%-8B\									 " current char
-" " set statusline+=%-14.(%l,%c%V%)\ %<%P				" offset
-" set statusline+=%10((%l,%c)%)\						" line and column
-" set statusline+=%p%%												" percentage of file
-
 " help for file
 set wildmenu
-" set wildmode=longest,list:full
-" testing a new version
 set wildmode=list:longest,full
 " Ignore compiled files
 set wildignore+=.o,~,pyc
 set wildignore+=.git,.hg,.svn
 
 " just a try: let's forget ;
-nnoremap ; :
-nnoremap : ;
-vnoremap ; :
-vnoremap : ;
+for m in ["n","v"]
+	exe m."noremap ; :"
+	exe m."noremap : ;"
+endfor
 
 if &runtimepath =~ 'fzf'
 	nnoremap <leader>;b :Buffers<CR>
@@ -231,9 +213,9 @@ set clipboard^=unnamedplus
 set lazyredraw
 
 " manage tabs
-map <Leader>te :tabnew<cr>
-map <Leader>to :tabonly<cr>
-map <Leader>tm :tabmove<Space>
+nnoremap <Leader>te :tabnew<cr>
+nnoremap <Leader>to :tabonly<cr>
+nnoremap <Leader>tm :tabmove<Space>
 
 function! GitGrep() abort
 	echom "gitgrep"
