@@ -220,41 +220,6 @@ endfunction
 nnoremap <silent> yo :call <SID>setup_paste()<CR>o
 nnoremap <silent> yO :call <SID>setup_paste()<CR>O
 
-" set completeopt=menu,menuone
-" if &runtimepath =~ 'neocomplete'
-"	 let g:acp_enableAtStartup = 0
-"	 let g:neocomplete#enable_at_startup = 0
-"	 let g:neocomplete#enable_smart_case = 1
-"
-"	 if !exists('g:neocomplete#sources')
-"		 let g:neocomplete#sources = {}
-"	 endif
-"	 let g:neocomplete#sources._ = ['buffer', 'member', 'tag', 'file', 'dictionary']
-"	 let g:neocomplete#sources.go = ['omni']
-"
-"	 " enable heavy omni completion
-"	 " if !exists('g:neocomplete#force_omni_input_patterns')
-"	 "	let g:neocomplete#force_omni_input_patterns = {}
-"	 " endif
-"	 " let g:neocomplete#force_omni_input_patterns.go = '[^.[:digit:] *\t]\.'
-"
-"	 " Plugin key-mappings.
-"	 "inoremap <expr><C-g> neocomplete#undo_completion()
-"	 "inoremap <expr><C-l> neocomplete#complete_common_string()
-"
-"	 "imap <C-k>		 <Plug>(neosnippet_expand_or_jump)
-"	 "smap <C-k>		 <Plug>(neosnippet_expand_or_jump)
-"	 "xmap <C-k>		 <Plug>(neosnippet_expand_target)
-"	 "nnoremap <leader>es :NeoSnippetEdit<CR>
-"
-"	 "let g:neosnippet#snippets_directory = "~/.vim/neosnippets"
-"
-"	 " For conceal markers.
-"	 " if has('conceal')
-"		 "set conceallevel=2 concealcursor=niv
-"	 "endif
-" endif
-
 set splitright " split vertically to the right
 set splitbelow
 
@@ -531,9 +496,10 @@ function! LightlineFiletype() abort
 endfunction
 
 function! LightlineFilename() abort
-	let filename = expand('%:t') != '' ? expand('%:t') : '[No Name]'
-	let modified = &modified ? '+' : ''
-	return filename . modified
+	let l:filename = expand('%:t') != '' ? expand('%') : '[No Name]'
+	let l:filename = substitute(l:filename, "^/Users/xnicollet", "~", "")
+	let l:modified = &modified ? '+' : ''
+	return l:filename . l:modified
 endfunction
 
 set incsearch
