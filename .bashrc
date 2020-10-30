@@ -15,6 +15,7 @@ set -o vi
 source $HOME/bin/func.sh
 
 prepend PATH "$HOME/bin:/usr/local/sbin:/usr/local/bin"
+append PATH "/usr/local/mysql/bin"
 p=""
 while read -r -d: dir ; do
   append p "$dir"
@@ -49,7 +50,7 @@ bind -m vi-insert '"\C-d": delete-char'
 # bind -m vi-insert "\C-w.":backward-kill-word
 
 
-export GOPATH=$HOME
+export GOPATH=$HOME/go
 
 shopt -s extglob
 
