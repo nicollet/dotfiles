@@ -129,3 +129,5 @@ bin/unused
 bin/varcheck
 pprof/
 projects/
+.mysql_history
+.wget-hsts
