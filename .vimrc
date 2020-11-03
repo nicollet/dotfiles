@@ -90,6 +90,11 @@ for file_type in ["puppet", "ruby", "json", "vim"]
 	exe "augroup end"
 endfor
 
+augroup help_
+	autocmd!
+	au Filetype help "setl nolist"
+augroup end
+
 " Google style guide for bash
 augroup bash
 	autocmd!
@@ -121,16 +126,24 @@ function Number() abort
 endfunction
 nnoremap <silent> <Leader>sn :call Number()<CR>
 
+function! s:openVimrc() abort
+	" open it on the right side if we have one
+	if winnr('3l') == winnr() && winnr() != 1
+		3 wincmd l
+		exe "e $MYVIMRC"
+		return
+	endif
+	exe "vs $MYVIMRC"
+endfunction
+
 " open vimrc more easily
-nnoremap <Leader>ev :e $MYVIMRC<cr>
-" todo: improve this: should only save $MYVIMRC
+nnoremap <Leader>ev :call <SID>openVimrc()<cr>
 
-
-function! SaveVimrc() abort
+function! s:saveVimrc() abort
 	let l:num_current = bufnr()
-  let l:vimrc = environ()["MYVIMRC"]
+	let l:vimrc = environ()["MYVIMRC"]
 	let l:loaded = bufloaded(l:vimrc)
-  if !l:loaded
+	if !l:loaded
 		exe "e $MYVIMRC"
 	endif
 	let l:num_vimrc = bufnr(l:vimrc)
@@ -142,12 +155,9 @@ function! SaveVimrc() abort
 	endif
 endfunction
 
-" nnoremap <Leader>sv :w<cr> :source $MYVIMRC<cr>
-nnoremap <silent> <Leader>sv :call SaveVimrc()<cr>:source $MYVIMRC<cr>
-" should find a way to close it easily
+nnoremap <silent> <Leader>sv :call <SID>saveVimrc()<cr>:source $MYVIMRC<cr>
 
-" sane backspace
-set backspace=2
+set backspace=2 " sane backspace
 
 " for windows
 if has('win64')
@@ -160,11 +170,9 @@ highlight ColorColumn ctermbg=darkblue
 call matchadd('ColorColumn', '\%81v', 100)
 
 set laststatus=2
-" we need more colors
-" set t_Co=256
 
-" know where the cursor is located
-set noruler
+" don't need it: default
+" set noruler
 
 " help for file
 set wildmenu
@@ -173,7 +181,6 @@ set wildmode=list:longest,full
 set wildignore+=.o,~,pyc
 set wildignore+=.git,.hg,.svn
 
-" just a try: let's forget ;
 for m in ["n","v"]
 	exe m."noremap ; :"
 	exe m."noremap : ;"
