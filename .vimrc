@@ -39,11 +39,6 @@ endfor
 let mapleader = "\<Space>"
 
 if &runtimepath =~ 'vim-go'
-	" function! FormatAndImports()
-	"	 GoFmt
-	"	 GoImports
-	" endfunction
-
 	function! SetGoOptions() abort
 		nmap <Leader>gr <Plug>(go-run)
 		nmap <Leader>gb <Plug>(go-build)
@@ -60,11 +55,10 @@ if &runtimepath =~ 'vim-go'
 		nmap <Leader>gI <plug>(go-imports)
 
 		let g:go_fmt_autosave = 1
-		" let g:go_fmt_options = "-s -w"
-		let g:go_fmt_command = "goimports"
-
-		" for golang: automatically run GoImports
-		" autocmd BufWritePre *.go call FormatAndImports()
+		" let g:go_fmt_options = "-w"
+		" let g:go_fmt_command = "goimports"
+		let g:go_fmt_options = {}
+		let g:go_fmt_command = "gopls"
 
 		" some stuff from github.com/fatih/vim-go-tutorial
 		let g:go_list_type = "quickfix"
@@ -213,8 +207,8 @@ set splitright " split vertically to the right
 set splitbelow
 
 " let's give this a try
-set clipboard^=unnamed
-set clipboard^=unnamedplus
+" set clipboard^=unnamed
+" set clipboard^=unnamedplus
 
 " just a test
 set lazyredraw
@@ -493,6 +487,7 @@ endfunction
 
 set incsearch
 set hls
+nnoremap <silent> /. :nohl<cr>
 
 if &runtimepath =~ 'ale'
 	" function! SwapAleLintOnTextChanged()
@@ -508,8 +503,12 @@ if &runtimepath =~ 'ale'
 	let g:ale_lint_on_text_changed = 'normal'
 endif
 
-if &runtimepath =~ 'auto-pairs'
-	inoremap <c-l> <c-o>A
+inoremap <c-l> <c-o>A
+
+" if &runtimepath =~ 'auto-pairs'
+if exists('g:AutoPairsLoaded')
+	let g:AutoPairsShortcutToggle = ''
+	noremap <Leader>] :call AutoPairsToggle()<CR>
 endif
 
 " vim: set list ts=2 sw=2:
