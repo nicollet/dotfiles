@@ -56,9 +56,9 @@ if &runtimepath =~ 'vim-go'
 
 		let g:go_fmt_autosave = 1
 		" let g:go_fmt_options = "-w"
-		" let g:go_fmt_command = "goimports"
+		let g:go_fmt_command = "goimports"
 		let g:go_fmt_options = {}
-		let g:go_fmt_command = "gopls"
+		" let g:go_fmt_command = "gopls"
 
 		" some stuff from github.com/fatih/vim-go-tutorial
 		let g:go_list_type = "quickfix"
@@ -108,7 +108,7 @@ nnoremap ` '
 set history=100
 set visualbell
 
-" cnoremap w!! w !sudo tee %
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
 " will probably never use this
 function Number() abort
@@ -260,8 +260,7 @@ function! Qf_toggle() abort
 endfunction
 
 " remove quickfix or help screen with q
-nnoremap <Leader>q q
-nnoremap q :call Qf_toggle()<cr>
+nnoremap <Leader>q Qf_toggle()<cr>
 
 " comment the current line/region
 if &runtimepath =~ 'nicecom'
@@ -362,6 +361,9 @@ set backup
 set backupdir=~/.vim/backup " backup files
 set directory=~/.vim/tmp " temp files
 
+set undofile
+set undodir=~/.vim/undodir
+
 function! EnsureDir(dir) abort
 	if !isdirectory(a:dir)
 		" mode 773 does not work for some reason... strange
@@ -369,10 +371,9 @@ function! EnsureDir(dir) abort
 	endif
 endfunction
 
-for dir in split(&backupdir, ',') + split(&directory, ',')
+for dir in split(&backupdir, ',') + split(&directory, ',') + split(&undodir, ',')
 	call EnsureDir(dir)
 endfor
-
 
 " skip backups for bosun -w, which watches files for writes
 set backupskip+=*/cmd/bosun/{*.go\\,web/static/{js/*.ts\\,templates/*.html}}
@@ -510,5 +511,7 @@ if exists('g:AutoPairsLoaded')
 	let g:AutoPairsShortcutToggle = ''
 	noremap <Leader>] :call AutoPairsToggle()<CR>
 endif
+
+
 
 " vim: set list ts=2 sw=2:
