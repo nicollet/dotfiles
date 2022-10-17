@@ -1,18 +1,12 @@
 # This is Git's per-user configuration file.
 [user]
 	name = Xavier Nicollet
-	email = xnicollet@stackexchange.com
+	email = xnicollet@gmail.com
 [push]
 	default = simple
 
 [alias]
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset - %C(bold blue)<%an>%Creset %C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit
-
-[url "git@github.ds.stackexchange.com:"]
-	insteadOf = github.ds.stackexchange.com
-
-[url "git@ghe.stackexchange.com:"]
-	insteadOf = ghe.stackexchange.com
 
 [url "git@github.com:"]
 	insteadOf = github.com
