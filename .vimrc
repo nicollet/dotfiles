@@ -39,7 +39,7 @@ endfor
 let mapleader = "\<Space>"
 
 if &runtimepath =~ 'vim-go'
-	function! SetGoOptions() abort
+	def SetGoOptions()
 		nmap <Leader>gr <Plug>(go-run)
 		nmap <Leader>gb <Plug>(go-build)
 		nmap <Leader>gt <Plug>(go-test)
@@ -60,10 +60,10 @@ if &runtimepath =~ 'vim-go'
 		let g:go_fmt_options = {}
 		" let g:go_fmt_command = "gopls"
 
-		" some stuff from github.com/fatih/vim-go-tutorial
+		# some stuff from github.com/fatih/vim-go-tutorial
 		let g:go_list_type = "quickfix"
 		let g:go_highlight_build_constraints = 1
-	endfunction
+	enddef
 
 	augroup golang
 		autocmd!
@@ -120,36 +120,38 @@ function Number() abort
 endfunction
 nnoremap <silent> <Leader>sn :call Number()<CR>
 
-function! s:openVimrc() abort
-	" open it on the right side if we have one
-	if winnr('3l') == winnr() && winnr() != 1
-		3 wincmd l
+def! OpenVimrc()
+  # open vimrc on the right side if screen is vertically split.
+  const far_right = winnr("3l")
+	if far_right != 1
+		:3 wincmd l # go to the right
 		exe "e $MYVIMRC"
 		return
 	endif
-	exe "vs $MYVIMRC"
-endfunction
+	exe "vs $MYVIMRC" # vsplit and open .vimrc
+enddef
 
 " open vimrc more easily
-nnoremap <Leader>ev :call <SID>openVimrc()<cr>
+nnoremap <Leader>ev :call OpenVimrc()<cr>
 
-function! s:saveVimrc() abort
-	let l:num_current = bufnr()
-	let l:vimrc = environ()["MYVIMRC"]
-	let l:loaded = bufloaded(l:vimrc)
-	if !l:loaded
-		exe "e $MYVIMRC"
-	endif
-	let l:num_vimrc = bufnr(l:vimrc)
-	exe "buffer" l:num_vimrc
-	exe "write"
-	exe "buffer" l:num_current
-	if !l:loaded
-		exe "bd" l:num_vimrc
-	endif
-endfunction
+def! SaveVimrc()
+  const num_current = bufnr()
+  const vimrc = environ()["MYVIMRC"]
+  const loaded = bufloaded(vimrc)
+  if !loaded
+    exe "e $MYVIMRC"
+  endif
+  const num_vimrc = bufnr(vimrc)
+  exe "buffer" num_vimrc
+  exe "write"
+  exe "buffer" num_current
+  if !loaded
+    exe "bd" num_vimrc
+  endif
+enddef
 
-nnoremap <silent> <Leader>sv :call <SID>saveVimrc()<cr>:source $MYVIMRC<cr>
+" nnoremap <silent> <Leader>sv :call <SID>saveVimrc()<cr>:source $MYVIMRC<cr>
+nnoremap <Leader>sv :call SaveVimrc()<cr>:source $MYVIMRC<cr>
 
 set backspace=2 " sane backspace
 
@@ -511,7 +513,6 @@ if exists('g:AutoPairsLoaded')
 	let g:AutoPairsShortcutToggle = ''
 	noremap <Leader>] :call AutoPairsToggle()<CR>
 endif
-
 
 
 " vim: set list ts=2 sw=2:
