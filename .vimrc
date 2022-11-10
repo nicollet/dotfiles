@@ -54,15 +54,15 @@ if &runtimepath =~ 'vim-go'
 		nmap <Leader>gi <Plug>(go-info)
 		nmap <Leader>gI <plug>(go-imports)
 
-		let g:go_fmt_autosave = 1
-		" let g:go_fmt_options = "-w"
-		let g:go_fmt_command = "goimports"
-		let g:go_fmt_options = {}
-		" let g:go_fmt_command = "gopls"
+		g:go_fmt_autosave = 1
+		# let g:go_fmt_options = "-w"
+		g:go_fmt_command = "goimports"
+		g:go_fmt_options = {}
+		# let g:go_fmt_command = "gopls"
 
 		# some stuff from github.com/fatih/vim-go-tutorial
-		let g:go_list_type = "quickfix"
-		let g:go_highlight_build_constraints = 1
+		g:go_list_type = "quickfix"
+		g:go_highlight_build_constraints = 1
 	enddef
 
 	augroup golang
@@ -84,7 +84,7 @@ for file_type in ["puppet", "ruby", "json", "vim"]
 	exe "augroup end"
 endfor
 
-augroup help_
+augroup help
 	autocmd!
 	au Filetype help "setl nolist"
 augroup end
