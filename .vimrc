@@ -103,7 +103,7 @@ augroup end
 set hidden
 
 nnoremap ' `
-nnoremap ` '
+" set pastetoggle=` " toggle paste / nopaste
 
 set history=100
 set visualbell
@@ -189,7 +189,8 @@ if &runtimepath =~ 'fzf'
 	" see: https://statico.github.io/vim3.html
 end
 
-set autowrite
+" todo: see if it is problematic for :make
+set noautowrite
 
 " Looks like unimpaired.vim
 function! s:setup_paste() abort
@@ -380,7 +381,8 @@ endfor
 " skip backups for bosun -w, which watches files for writes
 set backupskip+=*/cmd/bosun/{*.go\\,web/static/{js/*.ts\\,templates/*.html}}
 
-set showcmd " show partial commands
+" set showcmd " show partial commands
+set display=truncate
 
 " reduce timeouts a bit
 set timeoutlen=500
@@ -492,6 +494,7 @@ set incsearch
 set hls
 nnoremap <silent> /. :nohl<cr>
 
+
 if &runtimepath =~ 'ale'
 	" function! SwapAleLintOnTextChanged()
 	" 	if g:ale_lint_on_text_changed == 'always'
@@ -514,5 +517,7 @@ if exists('g:AutoPairsLoaded')
 	noremap <Leader>] :call AutoPairsToggle()<CR>
 endif
 
+command DiffOrig vert new | set bt=nofile | r ++edit # | 0d_ | diffthis |
+  \ | wincmd p | diffthis
 
 " vim: set list ts=2 sw=2:
