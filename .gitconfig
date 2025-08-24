@@ -1,12 +1,47 @@
 # This is Git's per-user configuration file.
+# Added comments from: https://blog.gitbutler.com/how-git-core-devs-configure-git
 [user]
 	name = Xavier Nicollet
 	email = xnicollet@gmail.com
 [push]
 	default = simple
+	autoSetupRemote = true
+	followTags = true
 
 [alias]
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset - %C(bold blue)<%an>%Creset %C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit
 
 [url "git@github.com:"]
 	insteadOf = github.com
+[column]
+	ui = auto
+[branch]
+	sort = -committerdate
+[tag]
+	sort = version:refname
+[init]
+	defaultBranch = main
+[diff]
+	algorithm = histogram
+	colorMoved = plain
+	mnemonicPrefix = true
+	renames = true
+[fetch]
+	prune = true
+	pruneTags = true
+	all = true
+[help]
+	autocorrect = prompt
+[commit]
+	verbose = true
+[rerere]
+	enabled = true
+	autoupdate = true
+[core]
+	excludesfile = /.gitignore
+[rebase]
+	autoSquash = true
+	autoStash = true
+	autoRefs = true
+[merge]
+	conflictstyle = zdiff3
