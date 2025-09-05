@@ -1,28 +1,141 @@
-# .bashrc
+# ~/.bashrc: executed by bash(1) for non-login shells.
+# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
+# for examples
 
 # If not running interactively, don't do anything
-[ -z "$PS1" ] && return
+case $- in
+    *i*) ;;
+      *) return;;
+esac
 
-echo ".bashrc"
+# don't put duplicate lines or lines starting with space in the history.
+# See bash(1) for more options
+HISTCONTROL=ignoreboth
+
+# don't record some commands
+HISTIGNORE="exit:ls:bg:fg:history:clear:r"
+
+# append to the history file, don't overwrite it
+shopt -s histappend
+
+# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+HISTSIZE=5000
+HISTFILESIZE=50000
+
+# Useful timestamp format
+HISTTIMEFORMAT='%F %T '
+
+# check the window size after each command and, if necessary,
+# update the values of LINES and COLUMNS.
+shopt -s checkwinsize
+
+alias sudo="sudo -E"
+
+# If set, the pattern "**" used in a pathname expansion context will
+# match all files and zero or more directories and subdirectories.
+#shopt -s globstar
+
+# make less more friendly for non-text input files, see lesspipe(1)
+[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+# set variable identifying the chroot you work in (used in the prompt below)
+if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+fi
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color|*-256color) color_prompt=yes;;
+esac
+
+# uncomment for a colored prompt, if the terminal has the capability; turned
+# off by default to not distract the user: the focus in a terminal window
+# should be on the output of commands, not on the prompt
+#force_color_prompt=yes
+
+if [ -n "$force_color_prompt" ]; then
+    if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+	# We have color support; assume it's compliant with Ecma-48
+	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+	# a case would tend to support setf rather than setaf.)
+	color_prompt=yes
+    else
+	color_prompt=
+    fi
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+fi
+unset color_prompt force_color_prompt
+
+# If this is an xterm set the title to user@host:dir
+case "$TERM" in
+xterm*|rxvt*)
+    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+    ;;
+*)
+    ;;
+esac
+
+# enable color support of ls and also add handy aliases
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    #alias fgrep='fgrep --color=auto'
+    #alias egrep='egrep --color=auto'
+fi
+
+# colored GCC warnings and errors
+export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+
+# some more ls aliases
+#alias ll='ls -l'
+#alias la='ls -A'
+#alias l='ls -CF'
+
+# Alias definitions.
+# You may want to put all your additions into a separate file like
+# ~/.bash_aliases, instead of adding them here directly.
+# See /usr/share/doc/bash-doc/examples in the bash-doc package.
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+
+# enable programmable completion features (you don't need to enable
+# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
+# sources /etc/bash.bashrc).
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+
 set -o vi
-
 # WRAP='\[\e[7h\]'
 # GREEN='\[\e[32m\]'
 # RED='\[\e[31m\]'
 # NC='\[\e[0m\]'
-
-# shellcheck source=/Users/nicollet/bin/func.sh
 source $HOME/bin/func.sh
+prepend PATH "$HOME/bin"
 
-prepend PATH "$HOME/bin:/usr/local/sbin:/usr/local/bin"
-append PATH "/usr/local/mysql/bin"
-p=""
-while read -r -d: dir ; do
-  append p "$dir"
-done < <(echo "${PATH}:")
-PATH=${p:1}
-unset p
-export PATH
+# p=""
+# while read -r -d: dir ; do
+#   append p "$dir"
+# done < <(echo "${PATH}:")
+# PATH=${p:1}
+# unset p
+# export PATH
+#
 
 bind -m emacs '"\ea": vi-editing-mode'
 
@@ -49,39 +162,8 @@ bind -m vi-insert '"\C-a": beginning-of-line'
 bind -m vi-insert '"\C-d": delete-char'
 # bind -m vi-insert "\C-w.":backward-kill-word
 
-
-export GOPATH=$HOME/go
-
 shopt -s extglob
-
-# Append to history: don't overwrite
-shopt -s histappend
-
-# Save multi-line commands as one command
-shopt -s cmdhist
-
 alias sd='screen -DR'
-alias ssh=my_ssh
-
-# bigger history
-HISTSIZE=5000
-HISTFILESIZE=50000
-
-# Avoid duplicate entries
-HISTCONTROL="erasedups:ignoreboth"
-
-# don't record some commands
-HISTIGNORE="exit:ls:bg:fg:history:clear:r"
-
-# Useful timestamp format
-HISTTIMEFORMAT='%F %T '
-
-alias sudo="sudo -E"
-# alias cdd="cd"
-
-# to launch vim
-bind '"\C-xe": edit-and-execute-command'
-bind '"\C-x;": edit-and-execute-command'
 
 # needed for vim backups
 mkdir -p ~/.vim/{tmp,backup}
@@ -93,175 +175,7 @@ PROMPT_DIRTRIM=3
 complete -d cd
 complete -d rmdir
 
-
-# have colors on MacOsX
-export CLICOLOR=1
-export LSCOLORS=ExFxCxDxBxegedabagacad
-export SCREENRC=.screenrc-Darwin
-
-FG_RED="\[$(tput setaf 1)\]"
-RESET="\[$(tput sgr0)\]"
-
-_idroot() {
-  whoami | grep -q '^root$'
-}
-
-_idcolor() {
-   _idroot && echo "${FG_RED}\\\$${RESET}" || echo '$'
-}
-
-PS1="${USER/xnicollet/}@:\w$(_idcolor) "
-export PS1
-
-set_ps1() {
-  [ -z "$STY" ] && return
-  PWD_=${PWD/\/Users\/xnicollet/\~}
-  screen -X eval "hstatus '$PWD_'"
-}
-
-PROMPT_COMMAND=set_ps1
-
-append PATH "/usr/local/go/bin"
-append PATH "${HOME}/projects/gcp/google-cloud-sdk/bin"
-export PATH
-
-alias vim='/usr/local/bin/vim'
-alias vi='/usr/local/bin/vim'
-
-export EDITOR=/usr/local/bin/vim
-
-# docker run for fpm
-# docker run -v $HOME:$HOME --name fpm --rm -t -i xa/fpm bash
-
-# some bash customizations from https://github.com/mrzoo/bash-sensible/
-
-# turn on recursive globbing
-shopt -s globstar 2> /dev/null
-
-# correct spelling errors in arguments supplied to cd
-shopt -s cdspell 2> /dev/null
-
-alias mount="mount | column -t"
-
-
-# update_cdstat() {
-#   local max_stat=100
-#   [ "$1" == "" ] && return
-#   local newpath=$1
-#   # count date_sec path
-#   local found=0
-#   local now
-#   now=$(date +%s)
-#   { while read -r count date path ; do
-#     [ "$path" == "$newpath" ] && { ((count++)) ; date=$now ; found=1 ; }
-#     echo "$count $date $path"
-#   done < ~/.cdstat
-#   [ "$found" -eq 0 ] && echo "1 $now $newpath"
-#   } | sort -nr | tail -$max_stat > ~/.cdstat.tmp
-#   sync
-#   mv ~/.cdstat{.tmp,}
-# }
-
-# use the go binary if available (10 times faster)
-# go get github.com/nicollet/update_cdstats
-update_cdstat_command=$(which update_cdstats || echo update_cdstat)
-
-
-gnuls() {
-  /usr/local/Cellar/coreutils/8.27/libexec/gnubin/ls "$@"
-}
-
-# cd() {
-#   local realpath
-#   [[ "${1}" == -* || "$1" == "" ]] || {
-#     realpath=$(realpath "$1") # check realpath before we cd into new dir
-#   }
-#   builtin cd "$@" && {
-#     [[ -n "$realpath" ]] && "$update_cdstat_command" "$realpath"
-#     # print below cursor
-#     local tmp
-#     tmp=$(mktemp)
-#     trap "rm -f ${tmp}" RETURN
-#     width="--width=$(tput cols)"
-#     gnuls -U --color -F $width -C | tee $tmp | head -1
-#     [ "$(wc -l <$tmp)" -gt 3 ] && echo "$(tput setaf 6)/.../$(tput sgr0)"
-#   }
-# }
-
-# cdpath=$(realpath ~/.cdd_path)
-# [ -f "$cdpath" ] || touch "$cdpath"
-
-# _fzf_compgen_dir() {
-#   sed 's/\s*#.*//' < "$cdpath" | grep -v '^$' | cat - <(cut -d' ' -f3- ~/.cdstat) | sort -u
-# }
-
-# cdp() {
-#   [ -n "$1" ] && dir=$(realpath "$1") || dir=$(pwd)
-#   grep -q -F -x "$dir" "$cdpath" || echo -e "$dir" >> "$cdpath"
-# }
-#
-# cdrm() {
-#   local filter=()
-#   [ -n "$1" ] && filter=(-q $1)
-#   local to_rm
-#   to_rm=$(fzf +m "${filter[@]}" < "$cdpath")
-#   # https://unix.stackexchange.com/a/204378/144167
-#   [ -n "$to_rm" ] && {
-#     grep -v -F -x -- "$to_rm" < "$cdpath"
-#     perl -e 'truncate STDOUT, tell STDOUT'
-#   } 1<> "$cdpath"
-# }
-#
-# cdls() {
-#   cat "$cdpath"
-# }
-#
-# function _cd_comp() {
-#   #echo "|${READLINE_LINE:$READLINE_POINT:1}|"
-#
-#   local words=()
-#   read -r -a words < <(echo "$READLINE_LINE")
-#   [ -z "$words" ] && return
-#   local last=${words[-1]}
-#   local search=""
-#   [ "$last" == "" ] || search="-q $last"
-#   opt="--bind tab:accept --expect tab,return"
-#   fzf="fzf --tiebreak=end,index $search --reverse --height 30% "
-#   #local found=$(_fzf_compgen_dir | $fzf $opt)
-#
-#   keyf=$(mktemp)
-#   pathf=$(mktemp)
-#   trap "rm $keyf $pathf" RETURN
-#   _fzf_compgen_dir | $fzf $opt | {
-#     IFS= read -r key && IFS= read -r path
-#     echo $key >$keyf
-#     echo $path >$pathf
-#   }
-#
-#   IFS= read -r key <$keyf
-#   IFS= read -r path <$pathf
-#
-#   # if we are completing an empty word
-#   local b=$(( READLINE_POINT - 1))
-#   [[ ${READLINE_LINE:$b:1} == " " ]] && words+=('replace_me')
-#
-#   words[-1]=$path
-#
-#   READLINE_LINE=${words[*]}
-#   READLINE_POINT=${#READLINE_LINE}
-#
-#   [ "$key" == "return" ] && {
-#     builtin bind -r "\er"
-#     builtin bind '"\e^": accept-line'
-#     return
-#   }
-#
-#   builtin bind '"\er": redraw-current-line'
-#   builtin bind '"\e^": magic-space'
-# }
-
-# test some bindings
-# bind -x '"\C-x2": _cd_comp'
+export EDITOR=/usr/bin/vim
 
 # fixme c-o
 stty discard undef
@@ -273,6 +187,3 @@ bind '"\C-of": "\C-x2\e^\er"'
 bind '"\C-oo": operate-and-get-next'
 
 bind -m vi-insert '"jk": vi-movement-mode'
-
-# Load RVM into a shell session *as a function*
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
